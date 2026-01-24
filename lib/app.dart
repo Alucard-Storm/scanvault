@@ -26,7 +26,7 @@ class ScanVaultApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
-    print('ScanVaultApp: Rebuilding with locale ${locale.languageCode}');
+    debugPrint('ScanVaultApp: Rebuilding with locale ${locale.languageCode}');
 
     return MaterialApp.router(
       title: 'ScanVault',

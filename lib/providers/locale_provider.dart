@@ -22,7 +22,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 
   Future<void> setLocale(Locale locale) async {
-    print('LocaleNotifier: Setting locale to ${locale.languageCode}');
+    debugPrint('LocaleNotifier: Setting locale to ${locale.languageCode}');
     state = locale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localeKey, locale.languageCode);

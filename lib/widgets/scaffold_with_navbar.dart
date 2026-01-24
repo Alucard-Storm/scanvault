@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/constants/strings.dart';
 import '../l10n/app_localizations.dart';
 
 /// Scaffold with a persistent bottom navigation bar

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/strings.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
 import '../../services/database_service.dart';

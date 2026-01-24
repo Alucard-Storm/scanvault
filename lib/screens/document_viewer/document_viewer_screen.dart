@@ -209,7 +209,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                       await ref.read(documentsProvider.notifier).updateDocument(
                         document.copyWith(folderId: null),
                       );
-                      if (mounted) {
+                      if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(l10n.movedToRoot)),
                         );
@@ -227,7 +227,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                     await ref.read(documentsProvider.notifier).updateDocument(
                       document.copyWith(folderId: folder.id),
                     );
-                     if (mounted) {
+                     if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(l10n.movedTo(folder.name))),
                         );
@@ -313,7 +313,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
               
               if (confirm == true && context.mounted) {
                 await ref.read(documentsProvider.notifier).deleteDocument(document.id);
-                if (mounted) context.pop();
+                if (context.mounted) context.pop();
               }
             },
           ),

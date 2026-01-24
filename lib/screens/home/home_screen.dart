@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../tags/tags_sheet.dart';
-import '../../core/constants/strings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/document.dart';
 
