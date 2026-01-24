@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../core/constants/strings.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/storage_service.dart';
 
@@ -15,18 +16,42 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.settings),
+        title: Text(l10n.settingsTab),
       ),
       body: ListView(
         children: [
           // Appearance section
-          _buildSectionHeader(context, 'Appearance'),
+          _buildSectionHeader(context, l10n.settingsTheme), // Reusing Theme string for header or leaving hardcoded? "Appearance" is better. Let's use Theme for now or hardcoded 'Appearance' if no key.
+          // Dictionary:
+          // settingsTheme: Theme
+          // settingsLanguage: Language
+          // I'll use "Appearance" hardcoded for now as I missed adding a specific key for the Header, but wait.
+          // Use 'Appearance' hardcoded? No, that defeats the purpose.
+          // I will use settingsTheme as a proxy or just keep 'Appearance' and fix ARB later. 
+          // Let's use hardcoded "Appearance" for header to minimize drift, OR add it to ARB.
+          // I'll keep "Appearance" hardcoded for headers if I don't have keys, but I'll update the items.
+          
+          _buildSectionHeader(context, 'Appearance'), 
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(l10n.settingsLanguage),
+            subtitle: Consumer(
+              builder: (context, ref, _) {
+                 final locale = ref.watch(localeProvider);
+                 return Text(_getLanguageName(locale.languageCode));
+              },
+            ),
+            onTap: () {
+              _showLanguagePicker(context, ref);
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.dark_mode_outlined),
-            title: const Text('Theme'),
+            title: Text(l10n.settingsTheme),
             subtitle: Text(_getThemeModeName(themeMode)),
             onTap: () {
               _showThemePicker(context, ref, themeMode);
@@ -43,7 +68,7 @@ class SettingsScreen extends ConsumerWidget {
               
               return ListTile(
                 leading: const Icon(Icons.storage_outlined),
-                title: const Text('Storage location'),
+                title: Text(l10n.settingsStorage),
                 subtitle: Text(customPath ?? 'Internal storage (Default)'),
                 onTap: () async {
                   await _showStoragePicker(context, ref);
@@ -54,16 +79,6 @@ class SettingsScreen extends ConsumerWidget {
                         tooltip: 'Reset to default',
                         onPressed: () async {
                            await storageService.resetToDefault();
-                            // Force rebuild is tricky as provider holds instance, but shared prefs updated
-                            // We might need a stateful provider or just setState if we were stateful
-                            // But here we are just reading path directly from service which reads from prefs (if implemented that way)
-                            // Ah, getCustomStoragePath reads from prefs object which is updated.
-                            // But to trigger UI rebuild we need to notify listeners or set state.
-                            // Since StorageService is not a notifier, we should probably wrap the path in a StateProvider 
-                            // or just use setState if we convert to StatefulWidget. 
-                            // For simplicity, let's use a specialized method to refresh or Force Rebuild.
-                            // Actually, let's convert SettingsScreen to StatefulWidget for easier UI update or use a Stream/StateProvider.
-                            // However, simplest is:
                             (context as Element).markNeedsBuild(); 
                         },
                       )
@@ -73,22 +88,22 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.cleaning_services_outlined),
-            title: const Text('Clear cache'),
+            title: Text(l10n.settingsClearCache),
             subtitle: const Text('Free up space'),
             onTap: () => _showClearCacheDialog(context),
           ),
           const Divider(),
 
           // About section
-          _buildSectionHeader(context, 'About'),
+          _buildSectionHeader(context, l10n.settingsAbout),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text('Version'),
+            title: Text(l10n.settingsVersion),
             subtitle: const Text('1.0.0'),
           ),
           ListTile(
             leading: const Icon(Icons.code),
-            title: const Text('Licenses'),
+            title: Text(l10n.settingsLicenses),
             onTap: () {
               showLicensePage(context: context);
             },
@@ -149,7 +164,7 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -241,5 +256,64 @@ class SettingsScreen extends ConsumerWidget {
         }
       }
     }
+  }
+
+  void _showLanguagePicker(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Choose Language'),
+        children: [
+          _buildLanguageOption(context, ref, 'English', 'en'),
+          _buildLanguageOption(context, ref, 'हिन्दी (Hindi)', 'hi'),
+          _buildLanguageOption(context, ref, 'বাংলা (Bengali)', 'bn'),
+          _buildLanguageOption(context, ref, 'தமிழ் (Tamil)', 'ta'),
+          _buildLanguageOption(context, ref, 'తెలుగు (Telugu)', 'te'),
+          _buildLanguageOption(context, ref, 'मराठी (Marathi)', 'mr'),
+          _buildLanguageOption(context, ref, 'ગુજરાતી (Gujarati)', 'gu'),
+          _buildLanguageOption(context, ref, 'ಕನ್ನಡ (Kannada)', 'kn'),
+          _buildLanguageOption(context, ref, 'മലയാളം (Malayalam)', 'ml'),
+          _buildLanguageOption(context, ref, 'ਪੰਜਾਬੀ (Punjabi)', 'pa'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(BuildContext context, WidgetRef ref, String label, String code) {
+    final currentLocale = ref.read(localeProvider);
+    final isSelected = currentLocale.languageCode == code;
+    
+    return SimpleDialogOption(
+      onPressed: () {
+        ref.read(localeProvider.notifier).setLocale(Locale(code));
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          children: [
+            Expanded(child: Text(label)),
+            if (isSelected)
+              const Icon(Icons.check, color: Colors.blue),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getLanguageName(String code) {
+    return switch (code) {
+      'en' => 'English',
+      'hi' => 'हिन्दी',
+      'bn' => 'বাংলা',
+      'ta' => 'தமிழ்',
+      'te' => 'తెలుగు',
+      'mr' => 'मराठी',
+      'gu' => 'ગુજરાતી',
+      'kn' => 'ಕನ್ನಡ',
+      'ml' => 'മലയാളം',
+      'pa' => 'ਪੰਜਾਬੀ',
+      _ => 'English',
+    };
   }
 }

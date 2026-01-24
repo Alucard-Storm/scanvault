@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../providers/document_provider.dart';
 import '../../services/ocr_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class OcrScreen extends ConsumerStatefulWidget {
   final String documentId;
@@ -62,7 +63,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('OCR Failed: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.ocrFailed(e))),
         );
       }
     }
@@ -95,14 +96,14 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Text saved to document')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.textSaved)),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.saveFailed(e))),
         );
       }
     } finally {
@@ -112,9 +113,11 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Extracted Text'),
+        title: Text(l10n.extractedText),
         actions: [
           if (widget.pageId != null)
             IconButton(
@@ -122,7 +125,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                 ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)) 
                 : const Icon(Icons.save_outlined),
               onPressed: _isSaving ? null : _saveText,
-              tooltip: 'Save to Document',
+              tooltip: l10n.saveToDocument,
             ),
           IconButton(
             icon: const Icon(Icons.translate),
@@ -132,24 +135,24 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                  context.pushNamed('translation', extra: text);
               }
             },
-            tooltip: 'Translate',
+            tooltip: l10n.translate,
           ),
           IconButton(
             icon: const Icon(Icons.copy),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: _textController.text));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Copied to clipboard')),
+                SnackBar(content: Text(l10n.copiedToClipboard)),
               );
             },
-            tooltip: 'Copy',
+            tooltip: l10n.copy,
           ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
                Share.share(_textController.text);
             },
-            tooltip: 'Share',
+            tooltip: l10n.share,
           ),
         ],
       ),
@@ -162,9 +165,9 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
                 maxLines: null,
                 expands: true,
                 textAlignVertical: TextAlignVertical.top,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'No text extracted...',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: l10n.noTextExtracted,
                 ),
                 readOnly: _isSaving,
               ),

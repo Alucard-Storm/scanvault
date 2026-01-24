@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 import 'package:scanvault/services/translation_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class TranslationScreen extends StatefulWidget {
   final String? initialText;
@@ -103,9 +104,11 @@ class _TranslationScreenState extends State<TranslationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Translation'),
+        title: Text(l10n.translation),
         elevation: 0,
       ),
       body: Column(
@@ -172,8 +175,9 @@ class _TranslationScreenState extends State<TranslationScreen> {
               padding: const EdgeInsets.all(16),
               children: [
                 _buildTextField(
+                  context,
                   controller: _sourceController,
-                  label: 'Source Text',
+                  label: l10n.sourceText,
                   onChanged: (_) {}, // Could handle auto-translate debounce
                 ),
                 const SizedBox(height: 16),
@@ -183,13 +187,14 @@ class _TranslationScreenState extends State<TranslationScreen> {
                     icon: _isTranslating 
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) 
                         : const Icon(Icons.translate),
-                    label: const Text('Translate'),
+                    label: Text(l10n.translate),
                   ),
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(
+                  context,
                   controller: _targetController,
-                  label: 'Translation',
+                  label: l10n.translation, // Reusing translation title as label? Or "Target Text"? l10n.translation works fine.
                   readOnly: true,
                 ),
               ],
@@ -223,12 +228,15 @@ class _TranslationScreenState extends State<TranslationScreen> {
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String label,
     bool readOnly = false,
     ValueChanged<String>? onChanged,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -242,10 +250,10 @@ class _TranslationScreenState extends State<TranslationScreen> {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: controller.text));
                    ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Copied to clipboard')),
+                    SnackBar(content: Text(l10n.copiedToClipboard)),
                   );
                 },
-                tooltip: 'Copy',
+                tooltip: l10n.copy,
               ),
             if (!readOnly && controller.text.isNotEmpty)
                IconButton(

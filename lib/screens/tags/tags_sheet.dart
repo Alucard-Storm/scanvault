@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../models/tag.dart';
 import '../../providers/document_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 class TagsSheet extends ConsumerStatefulWidget {
   final List<String> selectedTagIds;
@@ -47,19 +48,20 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
   }
 
   void _deleteTag(Tag tag) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Tag'),
-        content: Text('Are you sure you want to delete "${tag.name}"?'),
+        title: Text(l10n.deleteTagTitle),
+        content: Text(l10n.deleteTagConfirmation(tag.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -73,6 +75,7 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
   @override
   Widget build(BuildContext context) {
     final tagsAsync = ref.watch(tagsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: EdgeInsets.only(
@@ -85,7 +88,7 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              widget.isSelectionMode ? 'Select Tags' : 'Manage Tags',
+              widget.isSelectionMode ? l10n.selectTags : l10n.manageTags,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -94,10 +97,10 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
             child: tagsAsync.when(
               data: (tags) {
                 if (tags.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.all(32),
+                  return Padding(
+                    padding: const EdgeInsets.all(32),
                     child: Center(
-                      child: Text('No tags created yet'),
+                      child: Text(l10n.noTags),
                     ),
                   );
                 }
@@ -132,7 +135,7 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Center(child: Text('Error: $err')),
+              error: (err, _) => Center(child: Text(l10n.errorGeneric(err))),
             ),
           ),
           const Divider(height: 1),
@@ -143,10 +146,10 @@ class _TagsSheetState extends ConsumerState<TagsSheet> {
                 Expanded(
                   child: TextField(
                     controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: 'New Tag Name',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: InputDecoration(
+                      hintText: l10n.newTagName,
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                     onSubmitted: (_) => _createTag(),
                   ),

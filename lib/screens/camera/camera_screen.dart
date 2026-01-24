@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Camera screen using google_mlkit_document_scanner
 class CameraScreen extends ConsumerStatefulWidget {
@@ -54,7 +55,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       debugPrint('Error scanning: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error scanning: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorScanning(e))),
         );
         context.pop();
       }
@@ -130,7 +131,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       debugPrint('Error saving document: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Failed to save document: $e')),
+           SnackBar(content: Text(AppLocalizations.of(context)!.saveDocumentFailed(e))),
         );
         context.pop();
       }
@@ -142,6 +143,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     // Just show a loading indicator while the native scanner is active/processing
+    // Note: Localization can be accessed safely here if context is valid
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
@@ -151,7 +155,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
             const CircularProgressIndicator(),
             const SizedBox(height: 20),
             Text(
-              _isProcessing ? 'Saving Document...' : 'Launching Scanner...',
+              _isProcessing ? l10n.savingDocument : l10n.launchingScanner,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
             ),
           ],

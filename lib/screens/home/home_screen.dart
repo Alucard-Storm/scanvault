@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../tags/tags_sheet.dart';
 import '../../core/constants/strings.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document.dart';
 
 import '../../providers/document_provider.dart';
@@ -38,6 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final documentsAsync = ref.watch(documentsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: CustomScrollView(
@@ -53,7 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     controller: _searchController,
                     autofocus: true,
                     decoration: InputDecoration(
-                      hintText: 'Search documents...',
+                      hintText: l10n.searchHint,
                       border: InputBorder.none,
                       hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
                     ),
@@ -142,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     left: 16.0 + (clampedExpansion * 0), // Base padding
                                   ),
                                   child: Text(
-                                    AppStrings.appName,
+                                    l10n.appTitle,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface,
@@ -177,7 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 return SliverFillRemaining(
                   child: _isSearching 
                     ? const Center(child: Text('No results found'))
-                    : _buildEmptyState(context),
+                    : _buildEmptyState(context, l10n),
                 );
               }
               if (_isGridView) {
@@ -222,7 +224,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/camera'),
         icon: const Icon(Icons.document_scanner_rounded),
-        label: const Text(AppStrings.scan),
+        label: Text(l10n.scanFab),
       ).animate().scale(
             delay: 300.ms,
             duration: 400.ms,
@@ -231,7 +233,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     return Center(
@@ -250,14 +252,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 .scale(delay: 200.ms, duration: 400.ms),
             const SizedBox(height: 24),
             Text(
-              AppStrings.noDocuments,
+              l10n.noDocuments,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
             const SizedBox(height: 8),
             Text(
-              AppStrings.noDocumentsSubtitle,
+              l10n.noDocumentsSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
@@ -279,6 +281,7 @@ class _DocumentListItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat.yMMMd().add_jm();
+    final l10n = AppLocalizations.of(context)!;
 
     return Dismissible(
       key: Key(document.id),
@@ -293,16 +296,16 @@ class _DocumentListItem extends ConsumerWidget {
         return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Delete Document'),
-            content: Text('Are you sure you want to delete "${document.name}"?'),
+            title: Text(AppLocalizations.of(context)!.deleteDocumentTitle),
+            content: Text(AppLocalizations.of(context)!.deleteConfirmation(document.name)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Delete'),
+                child: Text(AppLocalizations.of(context)!.delete),
               ),
             ],
           ),
@@ -311,7 +314,7 @@ class _DocumentListItem extends ConsumerWidget {
       onDismissed: (direction) {
         ref.read(documentsProvider.notifier).deleteDocument(document.id);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${document.name} deleted')),
+          SnackBar(content: Text(l10n.deleted(document.name))),
         );
       },
       child: ListTile(
@@ -358,122 +361,135 @@ class _DocumentListItem extends ConsumerWidget {
   void _showOptions(BuildContext context, WidgetRef ref, Document document) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text('Rename'),
-            onTap: () async {
-              Navigator.pop(context);
-              // Implement rename dialog here if needed, or keeping it simple for now
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.folder_open),
-            title: const Text('Move to Folder'),
-            onTap: () async {
-               Navigator.pop(context); 
-               await _showMoveDialog(context, ref, document);
-            },
-          ),
-           ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text('Delete', style: TextStyle(color: Colors.red)),
-            onTap: () async {
-              Navigator.pop(context);
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Delete Document'),
-                  content: Text('Are you sure you want to delete "${document.name}"?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Delete'),
-                    ),
-                  ],
-                ),
-              );
-              
-              if (confirm == true) {
-                await ref.read(documentsProvider.notifier).deleteDocument(document.id);
-              }
-            },
-          ),
-        ],
-      )
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: Text(l10n.rename),
+              onTap: () async {
+                Navigator.pop(context);
+                // Implement rename dialog here if needed, or keeping it simple for now
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.folder_open),
+              title: Text(l10n.moveToFolder),
+              onTap: () async {
+                 Navigator.pop(context); 
+                 await _showMoveDialog(context, ref, document);
+              },
+            ),
+             ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+              onTap: () async {
+                Navigator.pop(context);
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(l10n.deleteDocumentTitle),
+                    content: Text(l10n.deleteConfirmation(document.name)),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(l10n.cancel),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(l10n.delete),
+                      ),
+                    ],
+                  ),
+                );
+                
+                if (confirm == true) {
+                  await ref.read(documentsProvider.notifier).deleteDocument(document.id);
+                }
+              },
+            ),
+          ],
+        );
+      }
     );
   }
 
   Future<void> _showMoveDialog(BuildContext context, WidgetRef ref, Document document) async {
     final folders = ref.read(foldersProvider).valueOrNull ?? [];
     
+    // We need l10n here too, but it's async and context might be invalid if we wait?
+    // Actually method is async but using context.mounted check.
+    // We can get l10n from context at start.
+    // However, context passed to showDialog builder will have l10n.
+    
     if (folders.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No folders available. Create one first.')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No folders available. Create one first.')),
+        );
+      }
       return;
     }
 
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Move to Folder'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: folders.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          title: Text(l10n.moveToFolder),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: folders.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    leading: const Icon(Icons.folder_off),
+                    title: Text(l10n.moveToRoot),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await ref.read(documentsProvider.notifier).updateDocument(
+                        document.copyWith(folderId: null),
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.movedToRoot)),
+                        );
+                      }
+                    },
+                  );
+                }
+                
+                final folder = folders[index - 1];
                 return ListTile(
-                  leading: const Icon(Icons.folder_off),
-                  title: const Text('None (Root)'),
+                  leading: Icon(Icons.folder, color: Color(folder.colorValue)),
+                  title: Text(folder.name),
                   onTap: () async {
                     Navigator.pop(context);
                     await ref.read(documentsProvider.notifier).updateDocument(
-                      document.copyWith(folderId: null),
+                      document.copyWith(folderId: folder.id),
                     );
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Moved to root')),
-                      );
-                    }
+                     if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.movedTo(folder.name))),
+                        );
+                      }
                   },
                 );
-              }
-              
-              final folder = folders[index - 1];
-              return ListTile(
-                leading: Icon(Icons.folder, color: Color(folder.colorValue)),
-                title: Text(folder.name),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(documentsProvider.notifier).updateDocument(
-                    document.copyWith(folderId: folder.id),
-                  );
-                   if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Moved to ${folder.name}')),
-                      );
-                    }
-                },
-              );
-            },
+              },
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+          ],
+        );
+      }
     );
   }
 }

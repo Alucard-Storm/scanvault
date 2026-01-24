@@ -6,6 +6,7 @@ import '../../core/constants/strings.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
 import '../../services/database_service.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Folders management screen
 class FoldersScreen extends ConsumerStatefulWidget {
@@ -20,10 +21,11 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final foldersAsync = ref.watch(foldersProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.folders),
+        title: Text(l10n.foldersTab),
       ),
       body: foldersAsync.when(
         data: (folders) {
@@ -39,7 +41,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    AppStrings.noFolders,
+                    l10n.noFolders,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -88,20 +90,21 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
       Colors.amber,
     ];
 
-    return showDialog(
+    await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
+          final l10n = AppLocalizations.of(context)!;
           return AlertDialog(
-            title: const Text('New Folder'),
+            title: Text(l10n.newFolder),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Folder Name',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: l10n.folderName,
+                    border: const OutlineInputBorder(),
                   ),
                   autofocus: true,
                   textCapitalization: TextCapitalization.sentences,
@@ -138,7 +141,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(l10n.cancel),
               ),
               FilledButton(
                 onPressed: () async {
@@ -154,7 +157,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     if (context.mounted) Navigator.pop(context);
                   }
                 },
-                child: const Text('Create'),
+                child: Text(l10n.create),
               ),
             ],
           );
@@ -173,6 +176,7 @@ class _FolderGridItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final color = Color(folder.colorValue);
+    final l10n = AppLocalizations.of(context)!;
     
     return InkWell(
       onTap: () {
@@ -207,7 +211,7 @@ class _FolderGridItem extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${folder.documentCount} items',
+              l10n.folderItems(folder.documentCount.toString()),
               style: theme.textTheme.bodySmall,
             ),
           ],
@@ -235,16 +239,17 @@ class _FolderGridItem extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
+          final l10n = AppLocalizations.of(context)!;
           return AlertDialog(
-            title: const Text('Edit Folder'),
+            title: Text(l10n.editFolder),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Folder Name',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: l10n.folderName,
+                    border: const OutlineInputBorder(),
                   ),
                   textCapitalization: TextCapitalization.sentences,
                 ),
@@ -283,16 +288,16 @@ class _FolderGridItem extends ConsumerWidget {
                    final confirm = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Delete Folder'),
-                      content: const Text('Delete this folder? Documents inside will be moved to root.'),
+                      title: Text(l10n.deleteFolderTitle),
+                      content: Text(l10n.deleteFolderConfirmation),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
+                          child: Text(l10n.cancel),
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Delete'),
+                          child: Text(l10n.delete),
                         ),
                       ],
                     ),
@@ -303,7 +308,7 @@ class _FolderGridItem extends ConsumerWidget {
                     if (context.mounted) Navigator.pop(context);
                   }
                 },
-                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
               ),
               FilledButton(
                 onPressed: () async {
@@ -317,7 +322,7 @@ class _FolderGridItem extends ConsumerWidget {
                     if (context.mounted) Navigator.pop(context);
                   }
                 },
-                child: const Text('Save'),
+                child: Text(l10n.save),
               ),
             ],
           );

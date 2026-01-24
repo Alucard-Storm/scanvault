@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../models/document.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Screen displaying documents within a specific folder
 class FolderDetailScreen extends ConsumerWidget {
@@ -26,12 +27,18 @@ class FolderDetailScreen extends ConsumerWidget {
       (f) => f.id == folderId,
       orElse: () => throw Exception('Folder not found'),
     );
+    
+    // Check if l10n is available (it should be)
+    final l10n = AppLocalizations.of(context);
 
     if (folder == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
+    
+    // Can safely assume l10n is not null here if MaterialApp is set up correctly
+    if (l10n == null) return const SizedBox.shrink();
 
     // Watch documents and filter by folderId
     final documentsAsync = ref.watch(documentsProvider);
@@ -45,14 +52,14 @@ class FolderDetailScreen extends ConsumerWidget {
             onPressed: () {
               _showRenameDialog(context, ref, folder);
             },
-            tooltip: 'Rename Folder',
+            tooltip: l10n.renameFolder,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: () {
                _showDeleteDialog(context, ref, folder.id);
             },
-            tooltip: 'Delete Folder',
+            tooltip: l10n.deleteFolderTitle,
           ),
         ],
       ),
@@ -72,7 +79,7 @@ class FolderDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Empty Folder',
+                    l10n.emptyFolder,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],
@@ -91,22 +98,23 @@ class FolderDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, s) => Center(child: Text('Error: $e')),
+        error: (e, s) => Center(child: Text(l10n.errorGeneric(e))),
       ),
     );
   }
 
   void _showRenameDialog(BuildContext context, WidgetRef ref, Folder folder) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: folder.name);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rename Folder'),
+        title: Text(l10n.renameFolder),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Folder Name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: l10n.folderName,
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -114,7 +122,7 @@ class FolderDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -125,7 +133,7 @@ class FolderDetailScreen extends ConsumerWidget {
                 if (context.mounted) Navigator.pop(context);
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -133,15 +141,16 @@ class FolderDetailScreen extends ConsumerWidget {
   }
 
   void _showDeleteDialog(BuildContext context, WidgetRef ref, String folderId) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Folder'),
-        content: const Text('Are you sure? Documents inside will NOT be deleted but moved to root.'),
+        title: Text(l10n.deleteFolderTitle),
+        content: Text(l10n.deleteFolderConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -162,7 +171,7 @@ class FolderDetailScreen extends ConsumerWidget {
                 context.pop(); // Go back to folders list
               }
             },
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

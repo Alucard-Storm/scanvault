@@ -16,6 +16,7 @@ import '../../services/pdf_service.dart';
 import '../../services/storage_service.dart';
 import '../tags/tags_sheet.dart';
 import 'share_options_dialog.dart';
+import '../../l10n/app_localizations.dart';
 
 class DocumentViewerScreen extends ConsumerStatefulWidget {
   final String documentId;
@@ -96,14 +97,14 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
         
         if (mounted) {
              ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${result.images.length} page(s) added successfully')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.pagesAdded(result.images.length.toString()))),
             );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add page: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.pageAddFailed(e))),
         );
       }
     } finally {
@@ -167,7 +168,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Export Failed: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.exportFailed(e))),
         );
       }
     } finally {
@@ -181,7 +182,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     if (folders.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No folders available. Create one first.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.noFoldersAvailable)),
         );
       }
       return;
@@ -189,68 +190,72 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
 
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Move to Folder'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: folders.length + 1, // +1 for "None" (remove from folder)
-            itemBuilder: (context, index) {
-              if (index == 0) {
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          title: Text(l10n.moveToFolder),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: folders.length + 1, // +1 for "None" (remove from folder)
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    leading: const Icon(Icons.folder_off),
+                    title: Text(l10n.moveToRoot),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await ref.read(documentsProvider.notifier).updateDocument(
+                        document.copyWith(folderId: null),
+                      );
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.movedToRoot)),
+                        );
+                      }
+                    },
+                  );
+                }
+                
+                final folder = folders[index - 1];
                 return ListTile(
-                  leading: const Icon(Icons.folder_off),
-                  title: const Text('None (Root)'),
+                  leading: Icon(Icons.folder, color: Color(folder.colorValue)),
+                  title: Text(folder.name),
                   onTap: () async {
                     Navigator.pop(context);
                     await ref.read(documentsProvider.notifier).updateDocument(
-                      document.copyWith(folderId: null),
+                      document.copyWith(folderId: folder.id),
                     );
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Moved to root')),
-                      );
-                    }
+                     if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.movedTo(folder.name))),
+                        );
+                      }
                   },
                 );
-              }
-              
-              final folder = folders[index - 1];
-              return ListTile(
-                leading: Icon(Icons.folder, color: Color(folder.colorValue)),
-                title: Text(folder.name),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await ref.read(documentsProvider.notifier).updateDocument(
-                    document.copyWith(folderId: folder.id),
-                  );
-                   if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Moved to ${folder.name}')),
-                      );
-                    }
-                },
-              );
-            },
+              },
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+          ],
+        );
+      }
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final document = ref.watch(documentsProvider.notifier).getDocumentById(widget.documentId);
+    final l10n = AppLocalizations.of(context)!;
 
     if (document == null) {
-      return const Scaffold(
-        body: Center(child: Text('Document not found')),
+      return Scaffold(
+        body: Center(child: Text(l10n.documentNotFound)),
       );
     }
 
@@ -268,22 +273,22 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                  extra: page.imagePath,
                );
             },
-            tooltip: 'Edit Page',
+            tooltip: l10n.editPage,
           ),
           IconButton(
             icon: const Icon(Icons.add_a_photo_outlined),
             onPressed: () => _addPage(document),
-            tooltip: 'Add Page',
+            tooltip: l10n.addPage,
           ),
           IconButton(
             icon: const Icon(Icons.text_fields),
             onPressed: () => _extractText(document),
-            tooltip: 'OCR',
+            tooltip: l10n.ocr,
           ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () => _sharePdf(document),
-            tooltip: 'Share PDF',
+            tooltip: l10n.sharePdf,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -291,16 +296,16 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                final confirm = await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('Delete Document'),
-                  content: const Text('Are you sure you want to delete this document?'),
+                  title: Text(l10n.deleteDocumentTitle),
+                  content: Text(l10n.deleteConfirmation(document.name)),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.cancel),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Delete'),
+                      child: Text(l10n.delete),
                     ),
                   ],
                 ),
@@ -315,7 +320,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
           IconButton(
             icon: const Icon(Icons.folder_open),
             onPressed: () => _moveToFolder(document),
-            tooltip: 'Move to Folder',
+            tooltip: l10n.moveToFolder,
           ),
           IconButton(
             icon: const Icon(Icons.label_outline),
@@ -340,7 +345,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                   ),
                 );
             },
-            tooltip: 'Tags',
+            tooltip: l10n.tags,
           ),
         ],
       ),
@@ -378,7 +383,9 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Page ${_currentPageIndex + 1} of ${document.pages.length}',
+                      l10n.pageCount((_currentPageIndex + 1).toString(), document.pages.length.toString()),
+                      // Wait, ARB: "Page {current} of {total}" expecting Object.
+                      // toString() is fine.
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],

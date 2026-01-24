@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 
-
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
 import '../../services/filter_service.dart';
 import '../../services/storage_service.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Editor screen for image enhancement
 class EditorScreen extends ConsumerStatefulWidget {
@@ -67,7 +67,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       debugPrint('Error loading image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading image: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorLoadingImage(e))),
         );
         context.pop();
       }
@@ -104,7 +104,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error applying filter: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorApplyingFilter(e))),
         );
       }
     }
@@ -176,7 +176,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       debugPrint('Error saving: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Failed to save changes: $e')),
+           SnackBar(content: Text(AppLocalizations.of(context)!.saveChangesFailed(e))),
         );
       }
     } finally {
@@ -186,17 +186,18 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Edit'),
+        title: Text(l10n.editTitle),
         actions: [
           if (!_isLoading && !_isSaving)
             TextButton(
               onPressed: _saveAndExit,
-              child: const Text('Done'),
+              child: Text(l10n.done),
             ),
         ],
       ),
@@ -212,7 +213,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                           _previewImageBytes!,
                           fit: BoxFit.contain,
                         )
-                      : const Text('No image', style: TextStyle(color: Colors.white)),
+                      : Text(l10n.noImage, style: const TextStyle(color: Colors.white)),
             ),
           ),
           

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/document.dart';
+import '../../l10n/app_localizations.dart';
 
 class ShareOptionsDialog extends StatefulWidget {
   final Document document;
@@ -35,8 +36,9 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Export PDF'),
+      title: Text(l10n.exportPdfTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -45,8 +47,8 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
              // Include OCR Toggle
              CheckboxListTile(
                contentPadding: EdgeInsets.zero,
-               title: const Text('Include OCR Text'),
-               subtitle: const Text('Adds a separate page with extracted text'),
+               title: Text(l10n.includeOcrText),
+               subtitle: Text(l10n.includeOcrTextSubtitle),
                value: _includeOcrText,
                onChanged: (val) => setState(() => _includeOcrText = val ?? false),
                enabled: widget.document.ocrText != null && widget.document.ocrText!.isNotEmpty,
@@ -58,12 +60,12 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
              Row(
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                children: [
-                 Text('Pages (${_selectedPages.where((p) => p).length})', 
+                 Text('${l10n.pagesHeader} (${_selectedPages.where((p) => p).length})', 
                    style: Theme.of(context).textTheme.titleSmall,
                  ),
                  TextButton(
                    onPressed: _toggleSelectAll,
-                   child: Text(_isAllSelected ? 'Deselect All' : 'Select All'),
+                   child: Text(_isAllSelected ? l10n.deselectAll : l10n.selectAll),
                  ),
                ],
              ),
@@ -109,7 +111,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
                            ),
                            const SizedBox(height: 4),
                            Text(
-                             'Page ${index + 1}',
+                             l10n.pageIndex(index + 1),
                              style: TextStyle(
                                color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -130,7 +132,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: _selectedPages.contains(true) 
@@ -146,7 +148,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
                  });
                }
              : null, // Disable if no pages selected
-          child: const Text('Export'),
+          child: Text(l10n.exportAction),
         ),
       ],
     );
