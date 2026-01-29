@@ -12,6 +12,7 @@ import '../../models/document.dart';
 import '../../services/pdf_service.dart';
 import '../../services/export_service.dart';
 import '../document_viewer/share_options_dialog.dart';
+import '../../utils/folder_icons.dart';
 
 import '../../providers/document_provider.dart';
 
@@ -551,7 +552,10 @@ class _DocumentListItem extends ConsumerWidget {
                 
                 final folder = folders[index - 1];
                 return ListTile(
-                  leading: Icon(Icons.folder, color: Color(folder.colorValue)),
+                  leading: Icon(
+                    FolderIcons.getIconData(folder.iconName, folder.name),
+                    color: Color(folder.colorValue),
+                  ),
                   title: Text(folder.name),
                   onTap: () async {
                     Navigator.pop(context);

@@ -8,6 +8,7 @@ import '../../services/database_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/encryption_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../utils/folder_icons.dart';
 
 /// Folders management screen
 class FoldersScreen extends ConsumerStatefulWidget {
@@ -79,7 +80,8 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
 
   Future<void> _showCreateFolderDialog(BuildContext context) async {
     final controller = TextEditingController();
-    Color selectedColor = Theme.of(context).colorScheme.primary; 
+    Color selectedColor = Theme.of(context).colorScheme.primary;
+    String? selectedIconName; // null means use smart default
     
     final colors = [
       Colors.blue,
@@ -112,6 +114,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 const SizedBox(height: 16),
+                // Color picker
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -138,6 +141,114 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     }).toList(),
                   ),
                 ),
+                const SizedBox(height: 16),
+                // Icon picker
+                Text(
+                  'Folder Icon',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 60,
+                  width: double.maxFinite,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: FolderIcons.getAvailableIcons().length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // Auto/Smart default option
+                        final isSelected = selectedIconName == null;
+                        final previewIcon = FolderIcons.getIconData(
+                          null,
+                          controller.text.isEmpty ? 'Default' : controller.text,
+                        );
+                        return GestureDetector(
+                          onTap: () => setState(() => selectedIconName = null),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: 50,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.outlineVariant,
+                                width: isSelected ? 2 : 1,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  previewIcon,
+                                  size: 20,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Auto',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: isSelected
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      final iconEntry = FolderIcons.getAvailableIcons()[index - 1];
+                      final isSelected = selectedIconName == iconEntry.key;
+                      return GestureDetector(
+                        onTap: () => setState(() => selectedIconName = iconEntry.key),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 50,
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.outlineVariant,
+                              width: isSelected ? 2 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                iconEntry.value,
+                                size: 20,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                iconEntry.key,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
             actions: [
@@ -151,6 +262,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
                     final folder = Folder(
                       id: DatabaseService.generateId(),
                       name: controller.text.trim(),
+                      iconName: selectedIconName,
                       colorValue: selectedColor.toARGB32(),
                       createdAt: DateTime.now(),
                     );
@@ -200,7 +312,7 @@ class _FolderGridItem extends ConsumerWidget {
               alignment: Alignment.center,
               children: [
                 Icon(
-                  Icons.folder,
+                  FolderIcons.getIconData(folder.iconName, folder.name),
                   size: 48,
                   color: color,
                 ),
@@ -248,6 +360,7 @@ class _FolderGridItem extends ConsumerWidget {
   Future<void> _showEditDialog(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController(text: folder.name);
     Color selectedColor = Color(folder.colorValue);
+    String? selectedIconName = folder.iconName;
     
     final colors = [
       Colors.blue,
@@ -279,6 +392,7 @@ class _FolderGridItem extends ConsumerWidget {
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 const SizedBox(height: 16),
+                // Color picker
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -303,6 +417,114 @@ class _FolderGridItem extends ConsumerWidget {
                         ),
                       );
                     }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Icon picker
+                Text(
+                  'Folder Icon',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 60,
+                  width: double.maxFinite,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: FolderIcons.getAvailableIcons().length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // Auto/Smart default option
+                        final isSelected = selectedIconName == null;
+                        final previewIcon = FolderIcons.getIconData(
+                          null,
+                          controller.text.isEmpty ? folder.name : controller.text,
+                        );
+                        return GestureDetector(
+                          onTap: () => setState(() => selectedIconName = null),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: 50,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.outlineVariant,
+                                width: isSelected ? 2 : 1,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  previewIcon,
+                                  size: 20,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Auto',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: isSelected
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      final iconEntry = FolderIcons.getAvailableIcons()[index - 1];
+                      final isSelected = selectedIconName == iconEntry.key;
+                      return GestureDetector(
+                        onTap: () => setState(() => selectedIconName = iconEntry.key),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 50,
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.outlineVariant,
+                              width: isSelected ? 2 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                iconEntry.value,
+                                size: 20,
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                iconEntry.key,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -438,6 +660,7 @@ class _FolderGridItem extends ConsumerWidget {
                   if (controller.text.trim().isNotEmpty) {
                     final updatedFolder = folder.copyWith(
                       name: controller.text.trim(),
+                      iconName: selectedIconName,
                       colorValue: selectedColor.toARGB32(),
                     );
                     

@@ -17,6 +17,7 @@ import '../../services/storage_service.dart';
 import '../tags/tags_sheet.dart';
 import 'share_options_dialog.dart';
 import '../../l10n/app_localizations.dart';
+import '../../utils/folder_icons.dart';
 
 class DocumentViewerScreen extends ConsumerStatefulWidget {
   final String documentId;
@@ -220,7 +221,10 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                 
                 final folder = folders[index - 1];
                 return ListTile(
-                  leading: Icon(Icons.folder, color: Color(folder.colorValue)),
+                  leading: Icon(
+                    FolderIcons.getIconData(folder.iconName, folder.name),
+                    color: Color(folder.colorValue),
+                  ),
                   title: Text(folder.name),
                   onTap: () async {
                     Navigator.pop(context);
