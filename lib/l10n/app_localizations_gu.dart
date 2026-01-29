@@ -326,4 +326,69 @@ class AppLocalizationsGu extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name માંથી સ્કેન કરેલી છબીઓ';
   }
+
+  @override
+  String get settingsAppearance => 'દેખાવ';
+
+  @override
+  String get themeSystem => 'સિસ્ટમ ડિફૉલ્ટ';
+
+  @override
+  String get themeLight => 'લાઇટ';
+
+  @override
+  String get themeDark => 'ડાર્ક';
+
+  @override
+  String get settingsStorageHeader => 'સ્ટોરેજ';
+
+  @override
+  String get storageInternal => 'આંતરિક સ્ટોરેજ (ડિફૉલ્ટ)';
+
+  @override
+  String get resetToDefault => 'ડિફૉલ્ટ પર રીસેટ કરો';
+
+  @override
+  String get freeUpSpace => 'જગ્યા ખાલી કરો';
+
+  @override
+  String get chooseTheme => 'થીમ પસંદ કરો';
+
+  @override
+  String get clearCacheTitle => 'કેશ સાફ કરો';
+
+  @override
+  String get clearCacheMessage =>
+      'આ કામચલાઉ ફાઇલો કાઢી નાખશે. તમારા સાચવેલા દસ્તાવેજો કાઢી નાખવામાં આવશે નહીં. ચાલુ રાખવું?';
+
+  @override
+  String get clear => 'સાફ કરો';
+
+  @override
+  String get cacheCleared => 'કેશ સફળતાપૂર્વક સાફ કરવામાં આવી';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'કેશ સાફ કરવામાં નિષ્ફળ: $error';
+  }
+
+  @override
+  String get storageLocation => 'સ્ટોરેજ લોકેશન';
+
+  @override
+  String get storageDefault => 'ડિફૉલ્ટ (આંતરિક)';
+
+  @override
+  String get storageCustom => 'કસ્ટમ ફોલ્ડર પસંદ કરો...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'આ ફોલ્ડરમાં લખી શકાતું નથી: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'ભાષા પસંદ કરો';
+
+  @override
+  String get moreOptions => 'વધુ વિકલ્પો';
 }

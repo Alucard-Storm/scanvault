@@ -328,4 +328,69 @@ class AppLocalizationsMl extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name-ൽ നിന്ന് സ്കാൻ ചെയ്ത ചിത്രങ്ങൾ';
   }
+
+  @override
+  String get settingsAppearance => 'കാഴ്ച';
+
+  @override
+  String get themeSystem => 'സിസ്റ്റം ഡിഫോൾട്ട്';
+
+  @override
+  String get themeLight => 'ലൈറ്റ്';
+
+  @override
+  String get themeDark => 'ഡാർക്ക്';
+
+  @override
+  String get settingsStorageHeader => 'സ്റ്റോറേജ്';
+
+  @override
+  String get storageInternal => 'ഇന്റേണൽ സ്റ്റോറേജ് (ഡിഫോൾട്ട്)';
+
+  @override
+  String get resetToDefault => 'ഡിഫോൾട്ടിലേക്ക് റീസെറ്റ് ചെയ്യുക';
+
+  @override
+  String get freeUpSpace => 'സ്ഥലം സ്വതന്ത്രമാക്കുക';
+
+  @override
+  String get chooseTheme => 'തീം തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get clearCacheTitle => 'കാഷെ മായ്ക്കുക';
+
+  @override
+  String get clearCacheMessage =>
+      'ഇത് താൽക്കാലിക ഫയലുകൾ ഇല്ലാതാക്കും. നിങ്ങളുടെ സേവ് ചെയ്ത രേഖകൾ ഇല്ലാതാകില്ല. തുടരണോ?';
+
+  @override
+  String get clear => 'മായ്ക്കുക';
+
+  @override
+  String get cacheCleared => 'കാഷെ വിജയകരമായി മായ്ച്ചു';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'കാഷെ മായ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു: $error';
+  }
+
+  @override
+  String get storageLocation => 'സ്റ്റോറേജ് ലൊക്കേഷൻ';
+
+  @override
+  String get storageDefault => 'ഡിഫോൾട്ട് (ഇന്റേണൽ)';
+
+  @override
+  String get storageCustom => 'കസ്റ്റം ഫോൾഡർ തിരഞ്ഞെടുക്കുക...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'ഈ ഫോൾഡറിലേക്ക് എഴുതാൻ കഴിയില്ല: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'ഭാഷ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get moreOptions => 'കൂടുതൽ ഓപ്ഷനുകൾ';
 }

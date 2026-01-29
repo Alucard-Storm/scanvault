@@ -327,4 +327,69 @@ class AppLocalizationsTa extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name-லிருந்து ஸ்கேன் செய்யப்பட்ட படங்கள்';
   }
+
+  @override
+  String get settingsAppearance => 'தோற்றம்';
+
+  @override
+  String get themeSystem => 'கணினி இயல்புநிலை';
+
+  @override
+  String get themeLight => 'லைட்';
+
+  @override
+  String get themeDark => 'டார்க்';
+
+  @override
+  String get settingsStorageHeader => 'சேமிப்பகம்';
+
+  @override
+  String get storageInternal => 'உள் சேமிப்பகம் (இயல்புநிலை)';
+
+  @override
+  String get resetToDefault => 'இயல்புநிலைக்கு மீட்டமை';
+
+  @override
+  String get freeUpSpace => 'இடத்தை விடுவி';
+
+  @override
+  String get chooseTheme => 'தீம் தேர்வு';
+
+  @override
+  String get clearCacheTitle => 'தேக்ககத்தை அழி';
+
+  @override
+  String get clearCacheMessage =>
+      'இது தற்காலிக கோப்புகளை நீக்கும். உங்கள் சேமிக்கப்பட்ட ஆவணங்கள் நீக்கப்படாது. தொடரவா?';
+
+  @override
+  String get clear => 'அழி';
+
+  @override
+  String get cacheCleared => 'தேக்ககம் வெற்றிகரமாக அழிக்கப்பட்டது';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'தேக்ககத்தை அழிக்க முடியவில்லை: $error';
+  }
+
+  @override
+  String get storageLocation => 'சேமிப்பிட இடம்';
+
+  @override
+  String get storageDefault => 'இயல்புநிலை (உள்)';
+
+  @override
+  String get storageCustom => 'தனிப்பயன் கோப்புறையைத் தேர்ந்தெடுக்கவும்...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'இந்த கோப்புறையில் எழுத முடியாது: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'மொழியைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get moreOptions => 'மேலும் விருப்பங்கள்';
 }

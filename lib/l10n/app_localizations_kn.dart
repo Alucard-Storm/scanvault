@@ -327,4 +327,69 @@ class AppLocalizationsKn extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name ನಿಂದ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಚಿತ್ರಗಳು';
   }
+
+  @override
+  String get settingsAppearance => 'ಗೋಚರತೆ';
+
+  @override
+  String get themeSystem => 'ಸಿಸ್ಟಮ್ ಡೀಫಾಲ್ಟ್';
+
+  @override
+  String get themeLight => 'ಲೈಟ್';
+
+  @override
+  String get themeDark => 'ಡಾರ್ಕ್';
+
+  @override
+  String get settingsStorageHeader => 'ಶೇಖರಣೆ';
+
+  @override
+  String get storageInternal => 'ಆಂತರಿಕ ಶೇಖರಣೆ (ಡೀಫಾಲ್ಟ್)';
+
+  @override
+  String get resetToDefault => 'ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಿ';
+
+  @override
+  String get freeUpSpace => 'ಸ್ಥಳಾವಕಾಶ ಮುಕ್ತಗೊಳಿಸಿ';
+
+  @override
+  String get chooseTheme => 'ಥೀಮ್ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get clearCacheTitle => 'ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ';
+
+  @override
+  String get clearCacheMessage =>
+      'ಇದು ತಾತ್ಕಾಲಿಕ ಫೈಲ್‌ಗಳನ್ನು ಅಳಿಸುತ್ತದೆ. ನಿಮ್ಮ ಉಳಿಸಿದ ದಾಖಲೆಗಳನ್ನು ಅಳಿಸಲಾಗುವುದಿಲ್ಲ. ಮುಂದುವರಿಸುವುದೇ?';
+
+  @override
+  String get clear => 'ತೆರವುಗೊಳಿಸಿ';
+
+  @override
+  String get cacheCleared => 'ಕ್ಯಾಶ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ತೆರವುಗೊಳಿಸಲಾಗಿದೆ';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಲು ವಿಫಲವಾಗಿದೆ: $error';
+  }
+
+  @override
+  String get storageLocation => 'ಶೇಖರಣಾ ಸ್ಥಳ';
+
+  @override
+  String get storageDefault => 'ಡೀಫಾಲ್ಟ್ (ಆಂತರಿಕ)';
+
+  @override
+  String get storageCustom => 'ಕಸ್ಟಮ್ ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'ಈ ಫೋಲ್ಡರ್‌ಗೆ ಬರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get moreOptions => 'ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು';
 }

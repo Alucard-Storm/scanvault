@@ -327,4 +327,69 @@ class AppLocalizationsTe extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name నుండి స్కాన్ చేసిన చిత్రాలు';
   }
+
+  @override
+  String get settingsAppearance => 'కనిపించు విధానం';
+
+  @override
+  String get themeSystem => 'సిస్టమ్ డిఫాల్ట్';
+
+  @override
+  String get themeLight => 'లైట్';
+
+  @override
+  String get themeDark => 'డార్క్';
+
+  @override
+  String get settingsStorageHeader => 'స్టోరేజ్';
+
+  @override
+  String get storageInternal => 'అంతర్గత స్టోరేజ్ (డిఫాల్ట్)';
+
+  @override
+  String get resetToDefault => 'డిఫాల్ట్‌కు రీసెట్ చేయి';
+
+  @override
+  String get freeUpSpace => 'స్థలాన్ని ఖాళీ చేయి';
+
+  @override
+  String get chooseTheme => 'థీమ్ ఎంచుకోండి';
+
+  @override
+  String get clearCacheTitle => 'కాచీని క్లియర్ చేయి';
+
+  @override
+  String get clearCacheMessage =>
+      'ఇది తాత్కాలిక ఫైళ్లను తొలగిస్తుంది. మీ సేవ్ చేసిన పత్రాలు తొలగించబడవు. కొనసాగించాలా?';
+
+  @override
+  String get clear => 'క్లియర్';
+
+  @override
+  String get cacheCleared => 'కాచీ విజయవంతంగా క్లియర్ చేయబడింది';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'కాచీని క్లియర్ చేయడం విఫలమైంది: $error';
+  }
+
+  @override
+  String get storageLocation => 'స్టోరేజ్ లొకేషన్';
+
+  @override
+  String get storageDefault => 'డిఫాల్ట్ (అంతర్గత)';
+
+  @override
+  String get storageCustom => 'కస్టమ్ ఫోల్డర్‌ని ఎంచుకోండి...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'ఈ ఫోల్డర్‌లో రాయలేము: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'భాషను ఎంచుకోండి';
+
+  @override
+  String get moreOptions => 'మరిన్ని ఎంపికలు';
 }

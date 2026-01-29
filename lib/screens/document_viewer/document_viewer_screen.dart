@@ -248,6 +248,54 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     );
   }
 
+  void _deleteDocument(Document document) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteDocumentTitle),
+        content: Text(l10n.deleteConfirmation(document.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirm == true && mounted) {
+      await ref.read(documentsProvider.notifier).deleteDocument(document.id);
+      if (mounted) context.pop();
+    }
+  }
+
+  void _showTags(Document document) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => TagsSheet(
+          isSelectionMode: true,
+          selectedTagIds: document.tagIds,
+          onTagSelected: (tagId) async {
+            final currentTags = Set<String>.from(document.tagIds);
+            if (currentTags.contains(tagId)) {
+              currentTags.remove(tagId);
+            } else {
+              currentTags.add(tagId);
+            }
+            
+            await ref.read(documentsProvider.notifier).updateDocument(
+              document.copyWith(tagIds: currentTags.toList()),
+            );
+          },
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     final document = ref.watch(documentsProvider.notifier).getDocumentById(widget.documentId);
@@ -262,94 +310,9 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(document.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-               final page = document.pages[_currentPageIndex];
-               context.pushNamed(
-                 'editor',
-                 pathParameters: {'pageId': page.id},
-                 extra: page.imagePath,
-               );
-            },
-            tooltip: l10n.editPage,
-          ),
-          IconButton(
-            icon: const Icon(Icons.add_a_photo_outlined),
-            onPressed: () => _addPage(document),
-            tooltip: l10n.addPage,
-          ),
-          IconButton(
-            icon: const Icon(Icons.text_fields),
-            onPressed: () => _extractText(document),
-            tooltip: l10n.ocr,
-          ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () => _sharePdf(document),
-            tooltip: l10n.sharePdf,
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () async {
-               final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(l10n.deleteDocumentTitle),
-                  content: Text(l10n.deleteConfirmation(document.name)),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(l10n.cancel),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: Text(l10n.delete),
-                    ),
-                  ],
-                ),
-              );
-              
-              if (confirm == true && context.mounted) {
-                await ref.read(documentsProvider.notifier).deleteDocument(document.id);
-                if (context.mounted) context.pop();
-              }
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.folder_open),
-            onPressed: () => _moveToFolder(document),
-            tooltip: l10n.moveToFolder,
-          ),
-          IconButton(
-            icon: const Icon(Icons.label_outline),
-            onPressed: () {
-               showModalBottomSheet(
-                  context: context,
-                  builder: (context) => TagsSheet(
-                    isSelectionMode: true,
-                    selectedTagIds: document.tagIds,
-                    onTagSelected: (tagId) async {
-                      final currentTags = Set<String>.from(document.tagIds);
-                      if (currentTags.contains(tagId)) {
-                        currentTags.remove(tagId);
-                      } else {
-                        currentTags.add(tagId);
-                      }
-                      
-                      await ref.read(documentsProvider.notifier).updateDocument(
-                        document.copyWith(tagIds: currentTags.toList()),
-                      );
-                    },
-                  ),
-                );
-            },
-            tooltip: l10n.tags,
-          ),
-        ],
       ),
       body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           Column(
             children: [
@@ -362,6 +325,8 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                   },
                   itemBuilder: (context, index) {
                     final page = document.pages[index];
+                    // Use processed image if available, otherwise original
+                    // If filter is original, processed might be null or same as original
                     final imagePath = page.processedImagePath ?? page.imagePath;
                     final imageWidget = Image.file(
                       File(imagePath),
@@ -376,29 +341,109 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
                   },
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).colorScheme.surface,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      l10n.pageCount((_currentPageIndex + 1).toString(), document.pages.length.toString()),
-                      // Wait, ARB: "Page {current} of {total}" expecting Object.
-                      // toString() is fine.
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
+          
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Chip(
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.9),
+                label: Text(
+                  l10n.pageCount((_currentPageIndex + 1).toString(), document.pages.length.toString()),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           if (_isProcessing)
             Container(
               color: Colors.black54,
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.share_outlined),
+              onPressed: () => _sharePdf(document),
+              tooltip: l10n.sharePdf,
+            ),
+             IconButton(
+              icon: const Icon(Icons.crop_rotate), // changed from edit to crop/edit visual
+              onPressed: () {
+                 final page = document.pages[_currentPageIndex];
+                 context.pushNamed(
+                   'editor',
+                   pathParameters: {'pageId': page.id},
+                   extra: page.imagePath,
+                 );
+              },
+              tooltip: l10n.editPage,
+            ),
+            FloatingActionButton(
+              heroTag: 'add_page_fab',
+              elevation: 0,
+              onPressed: () => _addPage(document),
+              tooltip: l10n.addPage,
+              child: const Icon(Icons.add_a_photo_outlined),
+            ),
+             IconButton(
+              icon: const Icon(Icons.delete_outline), 
+              onPressed: () => _deleteDocument(document),
+              tooltip: l10n.delete,
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              tooltip: l10n.moreOptions,
+              onSelected: (value) {
+                switch (value) {
+                  case 'ocr':
+                    _extractText(document);
+                    break;
+                  case 'tags':
+                    _showTags(document);
+                    break;
+                  case 'folder':
+                    _moveToFolder(document);
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'ocr',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.text_fields),
+                    title: Text(l10n.ocr),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'tags',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.label_outline),
+                    title: Text(l10n.tags),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'folder',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.folder_open),
+                    title: Text(l10n.moveToFolder),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

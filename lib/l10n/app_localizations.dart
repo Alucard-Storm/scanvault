@@ -671,6 +671,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scanned images from {name}'**
   String scannedImagesFrom(Object name);
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @settingsStorageHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get settingsStorageHeader;
+
+  /// No description provided for @storageInternal.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal storage (Default)'**
+  String get storageInternal;
+
+  /// No description provided for @resetToDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to default'**
+  String get resetToDefault;
+
+  /// No description provided for @freeUpSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'Free up space'**
+  String get freeUpSpace;
+
+  /// No description provided for @chooseTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Theme'**
+  String get chooseTheme;
+
+  /// No description provided for @clearCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCacheTitle;
+
+  /// No description provided for @clearCacheMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete temporary files. Your saved documents will NOT be deleted. Continue?'**
+  String get clearCacheMessage;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @cacheCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get cacheCleared;
+
+  /// No description provided for @cacheClearFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to clear cache: {error}'**
+  String cacheClearFailed(Object error);
+
+  /// No description provided for @storageLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Location'**
+  String get storageLocation;
+
+  /// No description provided for @storageDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (Internal)'**
+  String get storageDefault;
+
+  /// No description provided for @storageCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Custom Folder...'**
+  String get storageCustom;
+
+  /// No description provided for @storageWriteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot write to this folder: {error}'**
+  String storageWriteError(Object error);
+
+  /// No description provided for @chooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Language'**
+  String get chooseLanguage;
+
+  /// No description provided for @moreOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get moreOptions;
 }
 
 class _AppLocalizationsDelegate

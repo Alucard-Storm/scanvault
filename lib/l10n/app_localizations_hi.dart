@@ -326,4 +326,69 @@ class AppLocalizationsHi extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name से स्कैन की गई छवियां';
   }
+
+  @override
+  String get settingsAppearance => 'दिखावट';
+
+  @override
+  String get themeSystem => 'सिस्टम डिफ़ॉल्ट';
+
+  @override
+  String get themeLight => 'लाइट';
+
+  @override
+  String get themeDark => 'डार्क';
+
+  @override
+  String get settingsStorageHeader => 'स्टोरेज';
+
+  @override
+  String get storageInternal => 'आंतरिक स्टोरेज (डिफ़ॉल्ट)';
+
+  @override
+  String get resetToDefault => 'डिफ़ॉल्ट पर रीसेट करें';
+
+  @override
+  String get freeUpSpace => 'जगह खाली करें';
+
+  @override
+  String get chooseTheme => 'थीम चुनें';
+
+  @override
+  String get clearCacheTitle => 'कैश साफ़ करें';
+
+  @override
+  String get clearCacheMessage =>
+      'यह अस्थायी फ़ाइलों को हटा देगा। आपके सहेजे गए दस्तावेज़ नहीं हटाए जाएंगे। जारी रखें?';
+
+  @override
+  String get clear => 'साफ़ करें';
+
+  @override
+  String get cacheCleared => 'कैश सफलतापूर्वक साफ़ किया गया';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'कैश साफ़ करने में विफल: $error';
+  }
+
+  @override
+  String get storageLocation => 'स्टोरेज लोकेशन';
+
+  @override
+  String get storageDefault => 'डिफ़ॉल्ट (आंतरिक)';
+
+  @override
+  String get storageCustom => 'कस्टम फ़ोल्डर चुनें...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'इस फ़ोल्डर में नहीं लिख सकते: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'भाषा चुनें';
+
+  @override
+  String get moreOptions => 'अधिक विकल्प';
 }

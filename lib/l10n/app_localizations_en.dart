@@ -326,4 +326,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return 'Scanned images from $name';
   }
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'System Default';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get settingsStorageHeader => 'Storage';
+
+  @override
+  String get storageInternal => 'Internal storage (Default)';
+
+  @override
+  String get resetToDefault => 'Reset to default';
+
+  @override
+  String get freeUpSpace => 'Free up space';
+
+  @override
+  String get chooseTheme => 'Choose Theme';
+
+  @override
+  String get clearCacheTitle => 'Clear Cache';
+
+  @override
+  String get clearCacheMessage =>
+      'This will delete temporary files. Your saved documents will NOT be deleted. Continue?';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get cacheCleared => 'Cache cleared successfully';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'Failed to clear cache: $error';
+  }
+
+  @override
+  String get storageLocation => 'Storage Location';
+
+  @override
+  String get storageDefault => 'Default (Internal)';
+
+  @override
+  String get storageCustom => 'Select Custom Folder...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'Cannot write to this folder: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'Choose Language';
+
+  @override
+  String get moreOptions => 'More options';
 }

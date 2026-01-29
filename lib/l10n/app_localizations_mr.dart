@@ -326,4 +326,69 @@ class AppLocalizationsMr extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name मधून स्कॅन केलेल्या प्रतिमा';
   }
+
+  @override
+  String get settingsAppearance => 'दिसणे';
+
+  @override
+  String get themeSystem => 'सिस्टम डिफॉल्ट';
+
+  @override
+  String get themeLight => 'लाईट';
+
+  @override
+  String get themeDark => 'डार्क';
+
+  @override
+  String get settingsStorageHeader => 'स्टोरेज';
+
+  @override
+  String get storageInternal => 'अंतर्गत स्टोरेज (डिफॉल्ट)';
+
+  @override
+  String get resetToDefault => 'डिफॉल्टवर रीसेट करा';
+
+  @override
+  String get freeUpSpace => 'जागा मोकळी करा';
+
+  @override
+  String get chooseTheme => 'थीम निवडा';
+
+  @override
+  String get clearCacheTitle => 'कॅशे साफ करा';
+
+  @override
+  String get clearCacheMessage =>
+      'हे तात्पुरत्या फायली हटवेल. तुमची सेव्ह केलेली कागदपत्रे हटविली जाणार नाहीत. पुढे चालू ठेवायचे?';
+
+  @override
+  String get clear => 'साफ करा';
+
+  @override
+  String get cacheCleared => 'कॅशे यशस्वीरित्या साफ केली';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'कॅशे साफ करण्यात अयशस्वी: $error';
+  }
+
+  @override
+  String get storageLocation => 'स्टोरेज लोकेशन';
+
+  @override
+  String get storageDefault => 'डिफॉल्ट (अंतर्गत)';
+
+  @override
+  String get storageCustom => 'कस्टम फोल्डर निवडा...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'या फोल्डरमध्ये लिहू शकत नाही: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'भाषा निवडा';
+
+  @override
+  String get moreOptions => 'अधिक पर्याय';
 }

@@ -25,17 +25,7 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         children: [
           // Appearance section
-          _buildSectionHeader(context, l10n.settingsTheme), // Reusing Theme string for header or leaving hardcoded? "Appearance" is better. Let's use Theme for now or hardcoded 'Appearance' if no key.
-          // Dictionary:
-          // settingsTheme: Theme
-          // settingsLanguage: Language
-          // I'll use "Appearance" hardcoded for now as I missed adding a specific key for the Header, but wait.
-          // Use 'Appearance' hardcoded? No, that defeats the purpose.
-          // I will use settingsTheme as a proxy or just keep 'Appearance' and fix ARB later. 
-          // Let's use hardcoded "Appearance" for header to minimize drift, OR add it to ARB.
-          // I'll keep "Appearance" hardcoded for headers if I don't have keys, but I'll update the items.
-          
-          _buildSectionHeader(context, 'Appearance'), 
+          _buildSectionHeader(context, l10n.settingsAppearance),
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(l10n.settingsLanguage),
@@ -52,7 +42,7 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.dark_mode_outlined),
             title: Text(l10n.settingsTheme),
-            subtitle: Text(_getThemeModeName(themeMode)),
+            subtitle: Text(_getThemeModeName(context, themeMode)),
             onTap: () {
               _showThemePicker(context, ref, themeMode);
             },
@@ -60,7 +50,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // Storage section
-          _buildSectionHeader(context, 'Storage'),
+          _buildSectionHeader(context, l10n.settingsStorageHeader),
           Consumer(
             builder: (context, ref, _) {
               final storageService = ref.watch(storageServiceProvider);
@@ -69,14 +59,14 @@ class SettingsScreen extends ConsumerWidget {
               return ListTile(
                 leading: const Icon(Icons.storage_outlined),
                 title: Text(l10n.settingsStorage),
-                subtitle: Text(customPath ?? 'Internal storage (Default)'),
+                subtitle: Text(customPath ?? l10n.storageInternal),
                 onTap: () async {
                   await _showStoragePicker(context, ref);
                 },
                 trailing: customPath != null 
                     ? IconButton(
                         icon: const Icon(Icons.restore),
-                        tooltip: 'Reset to default',
+                        tooltip: l10n.resetToDefault,
                         onPressed: () async {
                            await storageService.resetToDefault();
                             (context as Element).markNeedsBuild(); 
@@ -89,7 +79,7 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.cleaning_services_outlined),
             title: Text(l10n.settingsClearCache),
-            subtitle: const Text('Free up space'),
+            subtitle: Text(l10n.freeUpSpace),
             onTap: () => _showClearCacheDialog(context),
           ),
           const Divider(),
@@ -114,27 +104,37 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showThemePicker(BuildContext context, WidgetRef ref, ThemeMode current) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Choose Theme'),
+        title: Text(l10n.chooseTheme),
         children: [
-          _buildThemeOption(context, ref, 'System Default', ThemeMode.system, current),
-          _buildThemeOption(context, ref, 'Light', ThemeMode.light, current),
-          _buildThemeOption(context, ref, 'Dark', ThemeMode.dark, current),
+          _buildThemeOption(context, ref, l10n.themeSystem, ThemeMode.system, current),
+          _buildThemeOption(context, ref, l10n.themeLight, ThemeMode.light, current),
+          _buildThemeOption(context, ref, l10n.themeDark, ThemeMode.dark, current),
         ],
       ),
     );
   }
+  
+  // Updated Helper to use localized strings
+  String _getThemeModeName(BuildContext context, ThemeMode mode) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (mode) {
+      ThemeMode.system => l10n.themeSystem,
+      ThemeMode.light => l10n.themeLight,
+      ThemeMode.dark => l10n.themeDark,
+    };
+  }
+
+  // .. _buildThemeOption remains same ..
 
   Widget _buildThemeOption(BuildContext context, WidgetRef ref, String label, ThemeMode mode, ThemeMode current) {
     return RadioListTile<ThemeMode>(
       title: Text(label),
-      // ignore: deprecated_member_use
       value: mode,
-      // ignore: deprecated_member_use
       groupValue: current,
-      // ignore: deprecated_member_use
       onChanged: (value) {
         if (value != null) {
           ref.read(themeModeProvider.notifier).setThemeMode(value);
@@ -144,31 +144,25 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _getThemeModeName(ThemeMode mode) {
-    return switch (mode) {
-      ThemeMode.system => 'System Default',
-      ThemeMode.light => 'Light',
-      ThemeMode.dark => 'Dark',
-    };
-  }
   
   Future<void> _showClearCacheDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear Cache'),
-        content: const Text('This will delete temporary files. Your saved documents will NOT be deleted. Continue?'),
+        title: Text(l10n.clearCacheTitle),
+        content: Text(l10n.clearCacheMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
               await _clearCache(context);
             },
-            child: const Text('Clear'),
+            child: Text(l10n.clear),
           ),
         ],
       ),
@@ -176,20 +170,21 @@ class SettingsScreen extends ConsumerWidget {
   }
   
   Future<void> _clearCache(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final tempDir = await getTemporaryDirectory();
       if (await tempDir.exists()) {
         await tempDir.delete(recursive: true);
         if (context.mounted) {
            ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cache cleared successfully')),
+            SnackBar(content: Text(l10n.cacheCleared)),
           );
         }
       }
     } catch (e) {
       if (context.mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to clear cache: $e')),
+            SnackBar(content: Text(l10n.cacheClearFailed(e))),
           );
       }
     }
@@ -207,23 +202,24 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
   Future<void> _showStoragePicker(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<String>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Storage Location'),
+        title: Text(l10n.storageLocation),
         children: [
           SimpleDialogOption(
             onPressed: () => Navigator.pop(context, 'default'),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Text('Default (Internal)'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(l10n.storageDefault),
             ),
           ),
           SimpleDialogOption(
             onPressed: () => Navigator.pop(context, 'custom'),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Text('Select Custom Folder...'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(l10n.storageCustom),
             ),
           ),
         ],
@@ -247,7 +243,7 @@ class SettingsScreen extends ConsumerWidget {
         } catch (e) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Cannot write to this folder: $e')),
+              SnackBar(content: Text(l10n.storageWriteError(e))),
             );
           }
         }
@@ -256,10 +252,11 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showLanguagePicker(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Choose Language'),
+        title: Text(l10n.chooseLanguage),
         children: [
           _buildLanguageOption(context, ref, 'English', 'en'),
           _buildLanguageOption(context, ref, 'हिन्दी (Hindi)', 'hi'),

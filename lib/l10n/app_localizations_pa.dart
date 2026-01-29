@@ -326,4 +326,69 @@ class AppLocalizationsPa extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name ਤੋਂ ਸਕੈਨ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ';
   }
+
+  @override
+  String get settingsAppearance => 'ਦਿੱਖ';
+
+  @override
+  String get themeSystem => 'ਸਿਸਟਮ ਡਿਫੌਲਟ';
+
+  @override
+  String get themeLight => 'ਲਾਈਟ';
+
+  @override
+  String get themeDark => 'ਡਾਰਕ';
+
+  @override
+  String get settingsStorageHeader => 'ਸਟੋਰੇਜ';
+
+  @override
+  String get storageInternal => 'ਅੰਦਰੂਨੀ ਸਟੋਰੇਜ (ਡਿਫੌਲਟ)';
+
+  @override
+  String get resetToDefault => 'ਡਿਫੌਲਟ ਤੇ ਰੀਸੈਟ ਕਰੋ';
+
+  @override
+  String get freeUpSpace => 'ਜਗ੍ਹਾ ਖਾਲੀ ਕਰੋ';
+
+  @override
+  String get chooseTheme => 'ਥੀਮ ਚੁਣੋ';
+
+  @override
+  String get clearCacheTitle => 'ਕੈਸ਼ੇ ਸਾਫ਼ ਕਰੋ';
+
+  @override
+  String get clearCacheMessage =>
+      'ਇਹ ਅਸਥਾਈ ਫਾਈਲਾਂ ਨੂੰ ਮਿਟਾ ਦੇਵੇਗਾ। ਤੁਹਾਡੇ ਸੁਰੱਖਿਅਤ ਕੀਤੇ ਦਸਤਾਵੇਜ਼ ਨਹੀਂ ਮਿਟਾਏ ਜਾਣਗੇ। ਜਾਰੀ ਰੱਖਣਾ ਹੈ?';
+
+  @override
+  String get clear => 'ਸਾਫ਼ ਕਰੋ';
+
+  @override
+  String get cacheCleared => 'ਕੈਸ਼ੇ ਸਫਲਤਾਪੂਰਵਕ ਸਾਫ਼ ਕੀਤੀ ਗਈ';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'ਕੈਸ਼ੇ ਸਾਫ਼ ਕਰਨ ਵਿੱਚ ਅਸਫਲ: $error';
+  }
+
+  @override
+  String get storageLocation => 'ਸਟੋਰੇਜ ਟਿਕਾਣਾ';
+
+  @override
+  String get storageDefault => 'ਡਿਫੌਲਟ (ਅੰਦਰੂਨੀ)';
+
+  @override
+  String get storageCustom => 'ਕਸਟਮ ਫੋਲਡਰ ਚੁਣੋ...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'ਇਸ ਫੋਲਡਰ ਵਿੱਚ ਲਿਖਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'ਭਾਸ਼ਾ ਚੁਣੋ';
+
+  @override
+  String get moreOptions => 'ਹੋਰ ਵਿਕਲਪ';
 }

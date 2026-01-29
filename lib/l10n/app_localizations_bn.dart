@@ -327,4 +327,69 @@ class AppLocalizationsBn extends AppLocalizations {
   String scannedImagesFrom(Object name) {
     return '$name থেকে স্ক্যান করা ছবি';
   }
+
+  @override
+  String get settingsAppearance => 'চেহারা';
+
+  @override
+  String get themeSystem => 'সিস্টেম ডিফল্ট';
+
+  @override
+  String get themeLight => 'লাইট';
+
+  @override
+  String get themeDark => 'ডার্ক';
+
+  @override
+  String get settingsStorageHeader => 'স্টোরেজ';
+
+  @override
+  String get storageInternal => 'অভ্যন্তরীণ স্টোরেজ (ডিফল্ট)';
+
+  @override
+  String get resetToDefault => 'ডিফল্টে রিসেট করুন';
+
+  @override
+  String get freeUpSpace => 'জায়গা খালি করুন';
+
+  @override
+  String get chooseTheme => 'থিম চয়ন করুন';
+
+  @override
+  String get clearCacheTitle => 'ক্যাশ পরিষ্কার করুন';
+
+  @override
+  String get clearCacheMessage =>
+      'এটি অস্থায়ী ফাইল মুছে ফেলবে। আপনার সংরক্ষিত নথি মুছে ফেলা হবে না। চালিয়ে যাবেন?';
+
+  @override
+  String get clear => 'পরিষ্কার';
+
+  @override
+  String get cacheCleared => 'ক্যাশ সফলভাবে পরিষ্কার করা হয়েছে';
+
+  @override
+  String cacheClearFailed(Object error) {
+    return 'ক্যাশ পরিষ্কার করতে ব্যর্থ: $error';
+  }
+
+  @override
+  String get storageLocation => 'স্টোরেজ লোকেশন';
+
+  @override
+  String get storageDefault => 'ডিফল্ট (অভ্যন্তরীণ)';
+
+  @override
+  String get storageCustom => 'কাস্টম ফোল্ডার নির্বাচন করুন...';
+
+  @override
+  String storageWriteError(Object error) {
+    return 'এই ফোল্ডারে লেখা সম্ভব নয়: $error';
+  }
+
+  @override
+  String get chooseLanguage => 'ভাষা চয়ন করুন';
+
+  @override
+  String get moreOptions => 'আরও বিকল্প';
 }
