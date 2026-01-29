@@ -30,11 +30,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _searchQuery = '';
   bool _isGridView = false;
   String? _selectedTagId;
+  bool _isSelectionMode = false;
+  final Set<String> _selectedDocuments = {};
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _enterSelectionMode(String documentId) {
+    setState(() {
+      _isSelectionMode = true;
+      _selectedDocuments.add(documentId);
+    });
+  }
+
+  void _exitSelectionMode() {
+    setState(() {
+      _isSelectionMode = false;
+      _selectedDocuments.clear();
+    });
+  }
+
+  void _toggleDocumentSelection(String documentId) {
+    setState(() {
+      if (_selectedDocuments.contains(documentId)) {
+        _selectedDocuments.remove(documentId);
+        if (_selectedDocuments.isEmpty) {
+          _isSelectionMode = false;
+        }
+      } else {
+        _selectedDocuments.add(documentId);
+      }
+    });
   }
 
   @override
@@ -68,54 +97,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                   )
                 : null, // Title is handled by FlexibleSpaceBar when not searching
-            actions: [
-              IconButton(
-                icon: Icon(_isSearching ? Icons.close : Icons.search_rounded),
-                onPressed: () {
-                  setState(() {
-                     if (_isSearching) {
-                       _isSearching = false;
-                       _searchQuery = '';
-                       _searchController.clear();
-                     } else {
-                       _isSearching = true;
-                     }
-                  });
-                },
-              ),
-              IconButton(
-                icon: Icon(_isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded),
-                onPressed: () {
-                  setState(() => _isGridView = !_isGridView);
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.filter_list, 
-                  color: _selectedTagId != null ? theme.colorScheme.primary : null
-                ),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => TagsSheet(
-                      isSelectionMode: true,
-                      selectedTagIds: _selectedTagId != null ? [_selectedTagId!] : [],
-                      onTagSelected: (tagId) {
+            actions: _isSelectionMode
+                ? [
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _exitSelectionMode,
+                    ),
+                  ]
+                : [
+                    IconButton(
+                      icon: Icon(_isSearching ? Icons.close : Icons.search_rounded),
+                      onPressed: () {
                         setState(() {
-                          // Toggle selection
-                          if (_selectedTagId == tagId) {
-                            _selectedTagId = null;
-                          } else {
-                            _selectedTagId = tagId;
-                          }
+                           if (_isSearching) {
+                             _isSearching = false;
+                             _searchQuery = '';
+                             _searchController.clear();
+                           } else {
+                             _isSearching = true;
+                           }
                         });
-                        Navigator.pop(context);
                       },
                     ),
-                  );
-                },
-              ),
-            ],
-            flexibleSpace: _isSearching
+                    IconButton(
+                      icon: Icon(_isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded),
+                      onPressed: () {
+                        setState(() => _isGridView = !_isGridView);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.filter_list, 
+                        color: _selectedTagId != null ? theme.colorScheme.primary : null
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => TagsSheet(
+                            isSelectionMode: true,
+                            selectedTagIds: _selectedTagId != null ? [_selectedTagId!] : [],
+                            onTagSelected: (tagId) {
+                              setState(() {
+                                // Toggle selection
+                                if (_selectedTagId == tagId) {
+                                  _selectedTagId = null;
+                                } else {
+                                  _selectedTagId = tagId;
+                                }
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+            flexibleSpace: (_isSearching || _isSelectionMode)
                 ? null 
                 : LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constraints) {
@@ -147,7 +183,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     left: 16.0 + (clampedExpansion * 0), // Base padding
                                   ),
                                   child: Text(
-                                    l10n.appTitle,
+                                    _isSelectionMode
+                                        ? '${_selectedDocuments.length} selected'
+                                        : l10n.appTitle,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: colorScheme.onSurface,
@@ -207,7 +245,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final document = filteredDocuments[index];
-                      return _DocumentGridItem(document: document);
+                      return _DocumentGridItem(
+                        document: document,
+                        isSelectionMode: _isSelectionMode,
+                        isSelected: _selectedDocuments.contains(document.id),
+                        onLongPress: () => _enterSelectionMode(document.id),
+                        onTap: () {
+                          if (_isSelectionMode) {
+                            _toggleDocumentSelection(document.id);
+                          } else {
+                            context.push('/document/${document.id}');
+                          }
+                        },
+                      );
                     },
                     childCount: filteredDocuments.length,
                   ),
@@ -218,7 +268,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final document = filteredDocuments[index];
-                    return _DocumentListItem(document: document);
+                    return _DocumentListItem(
+                      document: document,
+                      isSelectionMode: _isSelectionMode,
+                      isSelected: _selectedDocuments.contains(document.id),
+                      onLongPress: () => _enterSelectionMode(document.id),
+                      onTap: () {
+                        if (_isSelectionMode) {
+                          _toggleDocumentSelection(document.id);
+                        } else {
+                          context.push('/document/${document.id}');
+                        }
+                      },
+                    );
                   },
                   childCount: filteredDocuments.length,
                 ),
@@ -234,17 +296,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
 
-      // Scan FAB
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'scan_fab',
-        onPressed: () => _showScanOptions(context),
-        icon: const Icon(Icons.add_a_photo_outlined),
-        label: Text(l10n.scanFab),
-      ).animate().scale(
-            delay: 300.ms,
-            duration: 400.ms,
-            curve: Curves.easeOutBack,
-          ),
+      // Scan FAB or Delete FAB
+      floatingActionButton: _isSelectionMode
+          ? FloatingActionButton.extended(
+              heroTag: 'delete_fab',
+              onPressed: () => _deleteSelectedDocuments(context, ref, l10n),
+              backgroundColor: theme.colorScheme.error,
+              foregroundColor: theme.colorScheme.onError,
+              icon: const Icon(Icons.delete),
+              label: Text('Delete (${_selectedDocuments.length})'),
+            ).animate().scale(
+                  delay: 100.ms,
+                  duration: 300.ms,
+                  curve: Curves.easeOutBack,
+                )
+          : FloatingActionButton.extended(
+              heroTag: 'scan_fab',
+              onPressed: () => _showScanOptions(context),
+              icon: const Icon(Icons.add_a_photo_outlined),
+              label: Text(l10n.scanFab),
+            ).animate().scale(
+                  delay: 300.ms,
+                  duration: 400.ms,
+                  curve: Curves.easeOutBack,
+                ),
+      floatingActionButtonLocation: _isSelectionMode
+          ? FloatingActionButtonLocation.centerFloat
+          : FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -317,18 +395,148 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
   }
+
+  Future<void> _deleteSelectedDocuments(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
+    final count = _selectedDocuments.length;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteDocumentTitle),
+        content: Text('Are you sure you want to delete $count document${count > 1 ? 's' : ''}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        for (final documentId in _selectedDocuments) {
+          await ref.read(documentsProvider.notifier).deleteDocument(documentId);
+        }
+        _exitSelectionMode();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Deleted $count document${count > 1 ? 's' : ''}')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to delete documents: $e')),
+          );
+        }
+      }
+    }
+  }
 }
 
 class _DocumentListItem extends ConsumerWidget {
   final Document document;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final VoidCallback onLongPress;
+  final VoidCallback onTap;
 
-  const _DocumentListItem({required this.document});
+  const _DocumentListItem({
+    required this.document,
+    required this.isSelectionMode,
+    required this.isSelected,
+    required this.onLongPress,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat.yMMMd().add_jm();
     final l10n = AppLocalizations.of(context)!;
+
+    final listTile = ListTile(
+      leading: Stack(
+        children: [
+          Hero(
+            tag: 'doc_thumb_${document.id}',
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(8),
+                image: document.thumbnailPath != null
+                    ? DecorationImage(
+                        image: FileImage(File(document.thumbnailPath!))
+                            as ImageProvider,
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: document.thumbnailPath == null
+                  ? Icon(Icons.description, color: theme.colorScheme.primary)
+                  : null,
+            ),
+          ),
+          if (isSelectionMode)
+            Positioned(
+              top: -2,
+              right: -2,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.surface,
+                  border: Border.all(
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.outline,
+                    width: 2,
+                  ),
+                ),
+                child: isSelected
+                    ? Icon(
+                        Icons.check,
+                        size: 14,
+                        color: theme.colorScheme.onPrimary,
+                      )
+                    : null,
+              ),
+            ),
+        ],
+      ),
+      title: Text(
+        document.name,
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        '${document.pages.length} pages • ${dateFormat.format(document.modifiedAt)}',
+        style: theme.textTheme.bodySmall,
+      ),
+      trailing: isSelectionMode
+          ? null
+          : IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () => _showOptions(context, ref, document),
+            ),
+      onTap: onTap,
+      onLongPress: onLongPress,
+    );
+
+    if (isSelectionMode) {
+      return listTile;
+    }
 
     return Dismissible(
       key: Key(document.id),
@@ -364,44 +572,7 @@ class _DocumentListItem extends ConsumerWidget {
           SnackBar(content: Text(l10n.deleted(document.name))),
         );
       },
-      child: ListTile(
-        leading: Hero(
-          tag: 'doc_thumb_${document.id}',
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
-              image: document.thumbnailPath != null
-                  ? DecorationImage(
-                      image: FileImage(File(document.thumbnailPath!))
-                          as ImageProvider,
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: document.thumbnailPath == null
-                ? Icon(Icons.description, color: theme.colorScheme.primary)
-                : null,
-          ),
-        ),
-        title: Text(
-          document.name,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text(
-          '${document.pages.length} pages • ${dateFormat.format(document.modifiedAt)}',
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () => _showOptions(context, ref, document),
-        ),
-        onTap: () {
-           context.push('/document/${document.id}');
-        },
-      ),
+      child: listTile,
     );
   }
   
@@ -588,8 +759,18 @@ class _DocumentListItem extends ConsumerWidget {
 
 class _DocumentGridItem extends StatelessWidget {
   final Document document;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final VoidCallback onLongPress;
+  final VoidCallback onTap;
   
-  const _DocumentGridItem({required this.document});
+  const _DocumentGridItem({
+    required this.document,
+    required this.isSelectionMode,
+    required this.isSelected,
+    required this.onLongPress,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -597,51 +778,84 @@ class _DocumentGridItem extends StatelessWidget {
     final dateFormat = DateFormat.yMMMd();
 
     return InkWell(
-      onTap: () => context.push('/document/${document.id}'),
+      onTap: onTap,
+      onLongPress: onLongPress,
       borderRadius: BorderRadius.circular(12),
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            Expanded(
-              child: Hero(
-                tag: 'doc_thumb_${document.id}',
-                child: document.thumbnailPath != null
-                  ? Image.file(
-                      File(document.thumbnailPath!),
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      child: Icon(Icons.description, size: 48, color: theme.colorScheme.primary),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: 'doc_thumb_${document.id}',
+                    child: document.thumbnailPath != null
+                      ? Image.file(
+                          File(document.thumbnailPath!),
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: Icon(Icons.description, size: 48, color: theme.colorScheme.primary),
+                        ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        document.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${document.pages.length} pages',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      Text(
+                        dateFormat.format(document.modifiedAt),
+                        style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (isSelectionMode)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surface.withValues(alpha: 0.9),
+                    border: Border.all(
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.outline,
+                      width: 2,
                     ),
+                  ),
+                  child: isSelected
+                      ? Icon(
+                          Icons.check,
+                          size: 16,
+                          color: theme.colorScheme.onPrimary,
+                        )
+                      : null,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    document.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${document.pages.length} pages',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  Text(
-                    dateFormat.format(document.modifiedAt),
-                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
