@@ -128,21 +128,18 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildThemeOption(BuildContext context, WidgetRef ref, String label, ThemeMode mode, ThemeMode current) {
-    return ListTile(
+    return RadioListTile<ThemeMode>(
       title: Text(label),
-      leading: Radio<ThemeMode>(
-        value: mode,
-        groupValue: current,
-        onChanged: (value) {
-          if (value != null) {
-            ref.read(themeModeProvider.notifier).setThemeMode(value);
-            Navigator.pop(context);
-          }
-        },
-      ),
-      onTap: () {
-        ref.read(themeModeProvider.notifier).setThemeMode(mode);
-        Navigator.pop(context);
+      // ignore: deprecated_member_use
+      value: mode,
+      // ignore: deprecated_member_use
+      groupValue: current,
+      // ignore: deprecated_member_use
+      onChanged: (value) {
+        if (value != null) {
+          ref.read(themeModeProvider.notifier).setThemeMode(value);
+          Navigator.pop(context);
+        }
       },
     );
   }
@@ -294,7 +291,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             Expanded(child: Text(label)),
             if (isSelected)
-              const Icon(Icons.check, color: Colors.blue),
+              Icon(Icons.check, color: Theme.of(context).colorScheme.primary),
           ],
         ),
       ),

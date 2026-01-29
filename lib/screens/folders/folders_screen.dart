@@ -68,6 +68,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
         error: (e, st) => Center(child: Text('Error: $e')),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'create_folder_fab',
         onPressed: () => _showCreateFolderDialog(context),
         child: const Icon(Icons.create_new_folder_outlined),
       ),
@@ -76,7 +77,7 @@ class _FoldersScreenState extends ConsumerState<FoldersScreen> {
 
   Future<void> _showCreateFolderDialog(BuildContext context) async {
     final controller = TextEditingController();
-    Color selectedColor = Colors.blue; 
+    Color selectedColor = Theme.of(context).colorScheme.primary; 
     
     final colors = [
       Colors.blue,

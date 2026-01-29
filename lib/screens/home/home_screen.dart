@@ -221,6 +221,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       // Scan FAB
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'scan_fab',
         onPressed: () => context.push('/camera'),
         icon: const Icon(Icons.document_scanner_rounded),
         label: Text(l10n.scanFab),
@@ -382,8 +383,8 @@ class _DocumentListItem extends ConsumerWidget {
               },
             ),
              ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+              leading: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+              title: Text(l10n.delete, style: TextStyle(color: Theme.of(context).colorScheme.error)),
               onTap: () async {
                 Navigator.pop(context);
                 final confirm = await showDialog<bool>(
