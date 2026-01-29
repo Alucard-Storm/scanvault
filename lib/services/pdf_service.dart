@@ -152,9 +152,17 @@ class PdfService {
   }
 
   /// Share PDF directly without saving
-  static Future<void> sharePdf(Document document) async {
+  static Future<void> sharePdf(
+    Document document, {
+    bool includeOcrText = false,
+    List<int>? selectedPageIndices,
+  }) async {
     try {
-      final pdfPath = await generatePdf(document);
+      final pdfPath = await generatePdf(
+        document,
+        includeOcrText: includeOcrText,
+        selectedPageIndices: selectedPageIndices,
+      );
       await Printing.sharePdf(
         bytes: await File(pdfPath).readAsBytes(),
         filename: '${document.name}.pdf',

@@ -647,6 +647,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export'**
   String get exportAction;
+
+  /// No description provided for @exportFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get exportFormat;
+
+  /// No description provided for @pdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get pdf;
+
+  /// No description provided for @images.
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
+  /// No description provided for @scannedImagesFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned images from {name}'**
+  String scannedImagesFrom(Object name);
 }
 
 class _AppLocalizationsDelegate

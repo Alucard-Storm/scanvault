@@ -87,5 +87,9 @@
     "deselectAll": "બધું નાપસંદ કરો",
     "selectAll": "બધું પસંદ કરો",
     "pageIndex": "પેજ {number}",
-    "exportAction": "નિકાસ કરો"
+    "exportAction": "નિકાસ કરો",
+    "exportFormat": "ફોર્મેટ",
+    "pdf": "PDF",
+    "images": "છબીઓ",
+    "scannedImagesFrom": "{name} માંથી સ્કેન કરેલી છબીઓ"
 }

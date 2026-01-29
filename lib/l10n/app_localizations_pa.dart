@@ -312,4 +312,18 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get exportAction => 'ਨਿਰਯਾਤ';
+
+  @override
+  String get exportFormat => 'ਫਾਰਮੈਟ';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'ਤਸਵੀਰਾਂ';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name ਤੋਂ ਸਕੈਨ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ';
+  }
 }

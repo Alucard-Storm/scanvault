@@ -313,4 +313,18 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get exportAction => 'ஏற்றுமதி';
+
+  @override
+  String get exportFormat => 'வடிவம்';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'படங்கள்';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name-லிருந்து ஸ்கேன் செய்யப்பட்ட படங்கள்';
+  }
 }

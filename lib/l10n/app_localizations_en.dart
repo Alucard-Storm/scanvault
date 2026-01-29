@@ -312,4 +312,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportAction => 'Export';
+
+  @override
+  String get exportFormat => 'Format';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'Images';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return 'Scanned images from $name';
+  }
 }

@@ -87,5 +87,9 @@
     "deselectAll": "সব অনির্বাচন করুন",
     "selectAll": "সব নির্বাচন করুন",
     "pageIndex": "পেজ {number}",
-    "exportAction": "রপ্তানি"
+    "exportAction": "রপ্তানি",
+    "exportFormat": "বিন্যাস",
+    "pdf": "PDF",
+    "images": "ছবি",
+    "scannedImagesFrom": "{name} থেকে স্ক্যান করা ছবি"
 }

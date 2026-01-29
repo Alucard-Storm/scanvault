@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 import '../tags/tags_sheet.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/document.dart';
+import '../../services/pdf_service.dart';
+import '../../services/export_service.dart';
+import '../document_viewer/share_options_dialog.dart';
 
 import '../../providers/document_provider.dart';
 
@@ -366,6 +369,46 @@ class _DocumentListItem extends ConsumerWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: Text(l10n.exportAction),
+              onTap: () async {
+                Navigator.pop(context);
+                final result = await showDialog<Map<String, dynamic>>(
+                  context: context,
+                  builder: (context) => ShareOptionsDialog(document: document),
+                );
+
+                if (result != null) {
+                   final format = result['format'] as ExportFormat; // Make sure to import ExportFormat or use dynamic carefully if imports are tricky in replace
+                   final includeOcr = result['includeOcr'] as bool;
+                   final selectedIndices = result['selectedIndices'] as List<int>;
+                   
+                   try {
+                     // Show loading indicator? For now just await
+                     if (format == ExportFormat.pdf) {
+                       await PdfService.sharePdf(
+                         document, 
+                         includeOcrText: includeOcr,
+                         selectedPageIndices: selectedIndices,
+                       );
+                     } else {
+                       await ExportService.shareImages(
+                         document, 
+                         selectedPageIndices: selectedIndices,
+                         shareText: l10n.scannedImagesFrom(document.name),
+                       );
+                     }
+                   } catch (e) {
+                     if (context.mounted) {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(content: Text(l10n.exportFailed(e.toString()))),
+                       );
+                     }
+                   }
+                }
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.edit),
               title: Text(l10n.rename),

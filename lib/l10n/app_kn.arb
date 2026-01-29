@@ -87,5 +87,9 @@
     "deselectAll": "ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆ ರದ್ದುಮಾಡಿ",
     "selectAll": "ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆಮಾಡಿ",
     "pageIndex": "ಪುಟ {number}",
-    "exportAction": "ರಫ್ತು"
+    "exportAction": "ರಫ್ತು",
+    "exportFormat": "ಸ್ವರೂಪ",
+    "pdf": "PDF",
+    "images": "ಚಿತ್ರಗಳು",
+    "scannedImagesFrom": "{name} ನಿಂದ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಚಿತ್ರಗಳು"
 }

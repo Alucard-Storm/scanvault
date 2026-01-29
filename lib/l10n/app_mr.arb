@@ -87,5 +87,9 @@
     "deselectAll": "सर्व निवड रद्द करा",
     "selectAll": "सर्व निवडा",
     "pageIndex": "पेज {number}",
-    "exportAction": "निर्यात"
+    "exportAction": "निर्यात",
+    "exportFormat": "फॉरमॅट",
+    "pdf": "PDF",
+    "images": "प्रतिमा",
+    "scannedImagesFrom": "{name} मधून स्कॅन केलेल्या प्रतिमा"
 }

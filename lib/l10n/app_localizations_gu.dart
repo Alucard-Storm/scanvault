@@ -312,4 +312,18 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get exportAction => 'નિકાસ કરો';
+
+  @override
+  String get exportFormat => 'ફોર્મેટ';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'છબીઓ';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name માંથી સ્કેન કરેલી છબીઓ';
+  }
 }

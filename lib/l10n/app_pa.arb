@@ -87,5 +87,9 @@
     "deselectAll": "ਸਾਰੇ ਅਣਚੁਣੇ ਕਰੋ",
     "selectAll": "ਸਾਰੇ ਚੁਣੋ",
     "pageIndex": "ਪੰਨਾ {number}",
-    "exportAction": "ਨਿਰਯਾਤ"
+    "exportAction": "ਨਿਰਯਾਤ",
+    "exportFormat": "ਫਾਰਮੈਟ",
+    "pdf": "PDF",
+    "images": "ਤਸਵੀਰਾਂ",
+    "scannedImagesFrom": "{name} ਤੋਂ ਸਕੈਨ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ"
 }

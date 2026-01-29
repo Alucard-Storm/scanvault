@@ -87,5 +87,9 @@
     "deselectAll": "सभी को अचयनित करें",
     "selectAll": "सभी का चयन करें",
     "pageIndex": "पेज {number}",
-    "exportAction": "निर्यात"
+    "exportAction": "निर्यात",
+    "exportFormat": "प्रारूप",
+    "pdf": "PDF",
+    "images": "छवियां",
+    "scannedImagesFrom": "{name} से स्कैन की गई छवियां"
 }

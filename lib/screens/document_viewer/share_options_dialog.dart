@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/document.dart';
 import '../../l10n/app_localizations.dart';
 
+enum ExportFormat { pdf, image }
+
 class ShareOptionsDialog extends StatefulWidget {
   final Document document;
 
@@ -18,6 +20,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
   late List<bool> _selectedPages;
   bool _includeOcrText = false;
   bool _isAllSelected = true;
+  ExportFormat _exportFormat = ExportFormat.pdf;
 
   @override
   void initState() {
@@ -38,20 +41,53 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(l10n.exportPdfTitle),
+      title: Text(l10n.exportPdfTitle), // You might want to rename this resource locally or in arb file if possible, or just use it knowing it says "Export" or "Options"
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Export Format Selection
+            Text(l10n.exportFormat, style: Theme.of(context).textTheme.titleSmall),
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<ExportFormat>(
+                    title: Text(l10n.pdf),
+                    value: ExportFormat.pdf,
+                    groupValue: _exportFormat,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (value) => setState(() => _exportFormat = value!),
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<ExportFormat>(
+                    title: Text(l10n.images),
+                    value: ExportFormat.image,
+                    groupValue: _exportFormat,
+                    contentPadding: EdgeInsets.zero,
+                    onChanged: (value) => setState(() {
+                      _exportFormat = value!;
+                      if (_exportFormat == ExportFormat.image) {
+                        _includeOcrText = false;
+                      }
+                    }),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),
+
              // Include OCR Toggle
              CheckboxListTile(
                contentPadding: EdgeInsets.zero,
                title: Text(l10n.includeOcrText),
                subtitle: Text(l10n.includeOcrTextSubtitle),
                value: _includeOcrText,
-               onChanged: (val) => setState(() => _includeOcrText = val ?? false),
-               enabled: widget.document.ocrText != null && widget.document.ocrText!.isNotEmpty,
+               onChanged: _exportFormat == ExportFormat.image 
+                  ? null 
+                  : (val) => setState(() => _includeOcrText = val ?? false),
+               enabled: _exportFormat == ExportFormat.pdf && widget.document.ocrText != null && widget.document.ocrText!.isNotEmpty,
              ),
              
              const Divider(),
@@ -143,6 +179,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
                  }
                  
                  Navigator.pop(context, {
+                   'format': _exportFormat,
                    'includeOcr': _includeOcrText,
                    'selectedIndices': selectedIndices,
                  });

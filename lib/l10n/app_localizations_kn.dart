@@ -313,4 +313,18 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get exportAction => 'ರಫ್ತು';
+
+  @override
+  String get exportFormat => 'ಸ್ವರೂಪ';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'ಚಿತ್ರಗಳು';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name ನಿಂದ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಚಿತ್ರಗಳು';
+  }
 }

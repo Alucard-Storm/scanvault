@@ -87,5 +87,9 @@
     "deselectAll": "அனைத்தையும் தேர்வுநீக்கு",
     "selectAll": "அனைத்தையும் தேர்வுசெய்",
     "pageIndex": "பக்கம் {number}",
-    "exportAction": "ஏற்றுமதி"
+    "exportAction": "ஏற்றுமதி",
+    "exportFormat": "வடிவம்",
+    "pdf": "PDF",
+    "images": "படங்கள்",
+    "scannedImagesFrom": "{name}-லிருந்து ஸ்கேன் செய்யப்பட்ட படங்கள்"
 }

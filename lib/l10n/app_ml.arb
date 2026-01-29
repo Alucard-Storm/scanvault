@@ -87,5 +87,9 @@
     "deselectAll": "എല്ലാം അളക്കുക",
     "selectAll": "എല്ലാം തിരഞ്ഞെടുക്കുക",
     "pageIndex": "പേജ് {number}",
-    "exportAction": "എക്‌സ്‌പോർട്ട്"
+    "exportAction": "എക്‌സ്‌പോർട്ട്",
+    "exportFormat": "ഫോർമാറ്റ്",
+    "pdf": "PDF",
+    "images": "ചിത്രങ്ങൾ",
+    "scannedImagesFrom": "{name}-ൽ നിന്ന് സ്കാൻ ചെയ്ത ചിത്രങ്ങൾ"
 }

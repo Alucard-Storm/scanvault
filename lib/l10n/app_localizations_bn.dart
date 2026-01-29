@@ -313,4 +313,18 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get exportAction => 'রপ্তানি';
+
+  @override
+  String get exportFormat => 'বিন্যাস';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'ছবি';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name থেকে স্ক্যান করা ছবি';
+  }
 }

@@ -87,5 +87,9 @@
     "deselectAll": "Deselect All",
     "selectAll": "Select All",
     "pageIndex": "Page {number}",
-    "exportAction": "Export"
+    "exportAction": "Export",
+    "exportFormat": "Format",
+    "pdf": "PDF",
+    "images": "Images",
+    "scannedImagesFrom": "Scanned images from {name}"
 }

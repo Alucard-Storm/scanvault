@@ -312,4 +312,18 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get exportAction => 'निर्यात';
+
+  @override
+  String get exportFormat => 'फॉरमॅट';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'प्रतिमा';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name मधून स्कॅन केलेल्या प्रतिमा';
+  }
 }

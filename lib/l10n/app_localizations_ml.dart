@@ -314,4 +314,18 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get exportAction => 'എക്‌സ്‌പോർട്ട്';
+
+  @override
+  String get exportFormat => 'ഫോർമാറ്റ്';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get images => 'ചിത്രങ്ങൾ';
+
+  @override
+  String scannedImagesFrom(Object name) {
+    return '$name-ൽ നിന്ന് സ്കാൻ ചെയ്ത ചിത്രങ്ങൾ';
+  }
 }
