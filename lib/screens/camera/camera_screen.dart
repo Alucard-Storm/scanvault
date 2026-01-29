@@ -14,6 +14,7 @@ import '../../providers/document_provider.dart';
 import '../../services/database_service.dart'; // Import DatabaseService
 import '../../services/ocr_service.dart'; // Import OcrService
 import '../../services/smart_naming_service.dart'; // Import SmartNamingService
+import '../../services/encryption_service.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Camera screen using google_mlkit_document_scanner
@@ -180,6 +181,23 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       );
 
       await ref.read(documentsProvider.notifier).addDocument(newDocument);
+      
+      // Encrypt files if folder is locked
+      if (folderId != null) {
+        final folders = await DatabaseService.getAllFolders();
+        final folder = folders.where((f) => f.id == folderId).firstOrNull;
+        
+        if (folder?.isLocked == true) {
+          // Encrypt all page images
+          final filePaths = pages.map((p) => p.imagePath).toList();
+          try {
+            await EncryptionService.encryptFiles(filePaths, folderId);
+          } catch (e) {
+            debugPrint('Failed to encrypt files: $e');
+            // Continue anyway - document is saved
+          }
+        }
+      }
       
       if (mounted) {
         context.pop();

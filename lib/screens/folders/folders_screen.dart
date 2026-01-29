@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
 import '../../services/database_service.dart';
+import '../../services/auth_service.dart';
+import '../../services/encryption_service.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Folders management screen
@@ -193,10 +195,33 @@ class _FolderGridItem extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.folder,
-              size: 48,
-              color: color,
+            const SizedBox(height: 12),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.folder,
+                  size: 48,
+                  color: color,
+                ),
+                if (folder.isLocked)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.lock,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 12),
             Padding(
@@ -283,6 +308,104 @@ class _FolderGridItem extends ConsumerWidget {
               ],
             ),
             actions: [
+              TextButton(
+                onPressed: () async {
+                  // Handle lock/unlock
+                  if (folder.isLocked) {
+                    // Unlock folder
+                    final authenticated = await AuthService.authenticate(
+                      reason: 'Unlock folder "${folder.name}"',
+                    );
+                    
+                    if (authenticated) {
+                      // Get documents in this folder
+                      final docs = await DatabaseService.getDocumentsInFolder(folder.id);
+                      final filePaths = docs.expand((d) => d.pages.map((p) => p.imagePath)).toList();
+                      
+                      // Decrypt files
+                      try {
+                        await EncryptionService.decryptFiles(filePaths, folder.id);
+                        
+                        final updatedFolder = folder.copyWith(isLocked: false);
+                        await ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
+                        
+                        // Explicitly refresh folders to update document counts
+                        await ref.read(foldersProvider.notifier).loadFolders();
+                        
+                        // Don't delete the key yet - keep it in case user locks again
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Folder unlocked')),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to unlock: $e')),
+                          );
+                        }
+                      }
+                    }
+                  } else {
+                    // Lock folder
+                    final canAuth = await AuthService.canAuthenticate();
+                    if (!canAuth) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Biometric authentication not available')),
+                        );
+                      }
+                      return;
+                    }
+                    
+                    final authenticated = await AuthService.authenticate(
+                      reason: 'Lock folder "${folder.name}"',
+                    );
+                    
+                    if (authenticated) {
+                      // Generate encryption key
+                      await EncryptionService.generateKeyForFolder(folder.id);
+                      
+                      // Get documents in this folder
+                      final docs = await DatabaseService.getDocumentsInFolder(folder.id);
+                      final filePaths = docs.expand((d) => d.pages.map((p) => p.imagePath)).toList();
+                      
+                      // Encrypt files
+                      try {
+                        await EncryptionService.encryptFiles(filePaths, folder.id);
+                        
+                        final updatedFolder = folder.copyWith(isLocked: true);
+                        await ref.read(foldersProvider.notifier).updateFolder(updatedFolder);
+                        
+                        // Explicitly refresh folders to update document counts
+                        await ref.read(foldersProvider.notifier).loadFolders();
+                        
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Folder locked and encrypted')),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to lock: $e')),
+                          );
+                        }
+                      }
+                    }
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(folder.isLocked ? Icons.lock_open : Icons.lock),
+                    const SizedBox(width: 8),
+                    Text(folder.isLocked ? 'Unlock' : 'Lock'),
+                  ],
+                ),
+              ),
               TextButton(
                 onPressed: () async {
                    final confirm = await showDialog<bool>(

@@ -27,6 +27,7 @@ mixin _$Folder {
   int get colorValue => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   int get documentCount => throw _privateConstructorUsedError;
+  bool get isLocked => throw _privateConstructorUsedError;
 
   /// Serializes this Folder to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,6 +50,7 @@ abstract class $FolderCopyWith<$Res> {
     int colorValue,
     DateTime createdAt,
     int documentCount,
+    bool isLocked,
   });
 }
 
@@ -73,6 +75,7 @@ class _$FolderCopyWithImpl<$Res, $Val extends Folder>
     Object? colorValue = null,
     Object? createdAt = null,
     Object? documentCount = null,
+    Object? isLocked = null,
   }) {
     return _then(
       _value.copyWith(
@@ -100,6 +103,10 @@ class _$FolderCopyWithImpl<$Res, $Val extends Folder>
                 ? _value.documentCount
                 : documentCount // ignore: cast_nullable_to_non_nullable
                       as int,
+            isLocked: null == isLocked
+                ? _value.isLocked
+                : isLocked // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -121,6 +128,7 @@ abstract class _$$FolderImplCopyWith<$Res> implements $FolderCopyWith<$Res> {
     int colorValue,
     DateTime createdAt,
     int documentCount,
+    bool isLocked,
   });
 }
 
@@ -144,6 +152,7 @@ class __$$FolderImplCopyWithImpl<$Res>
     Object? colorValue = null,
     Object? createdAt = null,
     Object? documentCount = null,
+    Object? isLocked = null,
   }) {
     return _then(
       _$FolderImpl(
@@ -171,6 +180,10 @@ class __$$FolderImplCopyWithImpl<$Res>
             ? _value.documentCount
             : documentCount // ignore: cast_nullable_to_non_nullable
                   as int,
+        isLocked: null == isLocked
+            ? _value.isLocked
+            : isLocked // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -186,6 +199,7 @@ class _$FolderImpl implements _Folder {
     this.colorValue = 0xFF00897B,
     required this.createdAt,
     this.documentCount = 0,
+    this.isLocked = false,
   });
 
   factory _$FolderImpl.fromJson(Map<String, dynamic> json) =>
@@ -205,10 +219,13 @@ class _$FolderImpl implements _Folder {
   @override
   @JsonKey()
   final int documentCount;
+  @override
+  @JsonKey()
+  final bool isLocked;
 
   @override
   String toString() {
-    return 'Folder(id: $id, name: $name, iconName: $iconName, colorValue: $colorValue, createdAt: $createdAt, documentCount: $documentCount)';
+    return 'Folder(id: $id, name: $name, iconName: $iconName, colorValue: $colorValue, createdAt: $createdAt, documentCount: $documentCount, isLocked: $isLocked)';
   }
 
   @override
@@ -225,7 +242,9 @@ class _$FolderImpl implements _Folder {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.documentCount, documentCount) ||
-                other.documentCount == documentCount));
+                other.documentCount == documentCount) &&
+            (identical(other.isLocked, isLocked) ||
+                other.isLocked == isLocked));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -238,6 +257,7 @@ class _$FolderImpl implements _Folder {
     colorValue,
     createdAt,
     documentCount,
+    isLocked,
   );
 
   /// Create a copy of Folder
@@ -262,6 +282,7 @@ abstract class _Folder implements Folder {
     final int colorValue,
     required final DateTime createdAt,
     final int documentCount,
+    final bool isLocked,
   }) = _$FolderImpl;
 
   factory _Folder.fromJson(Map<String, dynamic> json) = _$FolderImpl.fromJson;
@@ -278,6 +299,8 @@ abstract class _Folder implements Folder {
   DateTime get createdAt;
   @override
   int get documentCount;
+  @override
+  bool get isLocked;
 
   /// Create a copy of Folder
   /// with the given fields replaced by the non-null parameter values.

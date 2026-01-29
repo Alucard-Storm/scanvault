@@ -13,6 +13,7 @@ _$FolderImpl _$$FolderImplFromJson(Map<String, dynamic> json) => _$FolderImpl(
   colorValue: (json['colorValue'] as num?)?.toInt() ?? 0xFF00897B,
   createdAt: DateTime.parse(json['createdAt'] as String),
   documentCount: (json['documentCount'] as num?)?.toInt() ?? 0,
+  isLocked: json['isLocked'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$$FolderImplToJson(_$FolderImpl instance) =>
@@ -23,4 +24,5 @@ Map<String, dynamic> _$$FolderImplToJson(_$FolderImpl instance) =>
       'colorValue': instance.colorValue,
       'createdAt': instance.createdAt.toIso8601String(),
       'documentCount': instance.documentCount,
+      'isLocked': instance.isLocked,
     };

@@ -21,8 +21,9 @@ class DatabaseService {
 
     _database = await openDatabase(
       dbPath,
-      version: 1,
+      version: 2, // Increment version for migration
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -63,7 +64,8 @@ class DatabaseService {
         name TEXT NOT NULL,
         icon_name TEXT,
         color_value INTEGER DEFAULT 16752507,
-        created_at INTEGER NOT NULL
+        created_at INTEGER NOT NULL,
+        is_locked INTEGER DEFAULT 0
       )
     ''');
 
@@ -92,6 +94,14 @@ class DatabaseService {
         'CREATE INDEX idx_documents_folder ON documents(folder_id)');
     await db.execute(
         'CREATE INDEX idx_pages_document ON pages(document_id)');
+  }
+
+  /// Handle database migrations
+  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add is_locked column to folders table
+      await db.execute('ALTER TABLE folders ADD COLUMN is_locked INTEGER DEFAULT 0');
+    }
   }
 
   /// Get database instance
@@ -183,6 +193,38 @@ class DatabaseService {
     );
   }
 
+  /// Get documents in a specific folder
+  static Future<List<Document>> getDocumentsInFolder(String folderId) async {
+    final docs = await db.query(
+      'documents',
+      where: 'folder_id = ?',
+      whereArgs: [folderId],
+      orderBy: 'modified_at DESC',
+    );
+    final documents = <Document>[];
+
+    for (final doc in docs) {
+      final pages = await getPagesForDocument(doc['id'] as String);
+      final tagIds = await getTagIdsForDocument(doc['id'] as String);
+
+      documents.add(Document(
+        id: doc['id'] as String,
+        name: doc['name'] as String,
+        createdAt:
+            DateTime.fromMillisecondsSinceEpoch(doc['created_at'] as int),
+        modifiedAt:
+            DateTime.fromMillisecondsSinceEpoch(doc['modified_at'] as int),
+        folderId: doc['folder_id'] as String?,
+        ocrText: doc['ocr_text'] as String?,
+        thumbnailPath: doc['thumbnail_path'] as String?,
+        pages: pages,
+        tagIds: tagIds,
+      ));
+    }
+
+    return documents;
+  }
+
   /// Update a document
   static Future<void> updateDocument(Document document) async {
     await db.update(
@@ -254,6 +296,7 @@ class DatabaseService {
       'icon_name': folder.iconName,
       'color_value': folder.colorValue,
       'created_at': folder.createdAt.millisecondsSinceEpoch,
+      'is_locked': folder.isLocked ? 1 : 0,
     });
   }
 
@@ -276,6 +319,7 @@ class DatabaseService {
               createdAt:
                   DateTime.fromMillisecondsSinceEpoch(f['created_at'] as int),
               documentCount: f['doc_count'] as int,
+              isLocked: (f['is_locked'] as int) == 1,
             ))
         .toList();
   }
@@ -301,7 +345,8 @@ class DatabaseService {
       iconName: f['icon_name'] as String?,
       colorValue: f['color_value'] as int,
       createdAt: DateTime.fromMillisecondsSinceEpoch(f['created_at'] as int),
-      documentCount: 0, 
+      documentCount: 0,
+      isLocked: (f['is_locked'] as int) == 1,
     );
   }
 
@@ -319,6 +364,7 @@ class DatabaseService {
         'name': folder.name,
         'icon_name': folder.iconName,
         'color_value': folder.colorValue,
+        'is_locked': folder.isLocked ? 1 : 0,
       },
       where: 'id = ?',
       whereArgs: [folder.id],

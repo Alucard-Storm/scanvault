@@ -56,6 +56,11 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   dynamic_color: ^1.8.1
+  
+  # Security & Authentication
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.2.2
+  encrypt: ^5.0.3
 
 dev_dependencies:
   flutter_test:

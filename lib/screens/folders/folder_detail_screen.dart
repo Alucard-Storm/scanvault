@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../models/document.dart';
 import '../../models/folder.dart';
 import '../../providers/document_provider.dart';
+import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Screen displaying documents within a specific folder
@@ -43,10 +44,74 @@ class FolderDetailScreen extends ConsumerWidget {
     // Watch documents and filter by folderId
     final documentsAsync = ref.watch(documentsProvider);
 
+    // Check if folder is locked and require authentication
+    if (folder.isLocked) {
+      return FutureBuilder<bool>(
+        future: AuthService.authenticate(
+          reason: 'Access folder "${folder.name}"',
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              appBar: AppBar(title: Text(folder.name)),
+              body: const Center(child: CircularProgressIndicator()),
+            );
+          }
+          
+          if (snapshot.data != true) {
+            return Scaffold(
+              appBar: AppBar(title: Text(folder.name)),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.lock,
+                      size: 80,
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Authentication required',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: const Text('Go back'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          
+          // Authenticated, show folder contents
+          return _buildFolderContents(context, ref, folder, documentsAsync, l10n);
+        },
+      );
+    }
+    
+    // Not locked, show folder contents directly
+    return _buildFolderContents(context, ref, folder, documentsAsync, l10n);
+  }
+
+  Widget _buildFolderContents(
+    BuildContext context,
+    WidgetRef ref,
+    Folder folder,
+    AsyncValue<List<Document>> documentsAsync,
+    AppLocalizations l10n,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: Text(folder.name),
         actions: [
+          if (folder.isLocked)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Icon(Icons.lock, color: Theme.of(context).colorScheme.primary),
+            ),
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             onPressed: () {

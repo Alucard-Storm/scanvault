@@ -167,14 +167,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // Empty state or document list
           documentsAsync.when(
             data: (documents) {
+              // Get folders to filter locked ones
+              final foldersAsync = ref.watch(foldersProvider);
+              final lockedFolderIds = foldersAsync.valueOrNull
+                  ?.where((f) => f.isLocked)
+                  .map((f) => f.id)
+                  .toSet() ?? {};
+              
               final filteredDocuments = documents.where((doc) {
                 final matchesSearch = _searchQuery.isEmpty || 
                     doc.name.toLowerCase().contains(_searchQuery.toLowerCase());
                 
                 final matchesTag = _selectedTagId == null || 
                     doc.tagIds.contains(_selectedTagId);
+                
+                // Filter out documents in locked folders
+                final notInLockedFolder = doc.folderId == null || 
+                    !lockedFolderIds.contains(doc.folderId);
                     
-                return matchesSearch && matchesTag;
+                return matchesSearch && matchesTag && notInLockedFolder;
               }).toList();
                     
               if (filteredDocuments.isEmpty) {

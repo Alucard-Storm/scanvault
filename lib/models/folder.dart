@@ -13,6 +13,7 @@ class Folder with _$Folder {
     @Default(0xFF00897B) int colorValue,
     required DateTime createdAt,
     @Default(0) int documentCount,
+    @Default(false) bool isLocked,
   }) = _Folder;
 
   factory Folder.fromJson(Map<String, dynamic> json) => _$FolderFromJson(json);
