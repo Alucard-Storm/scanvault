@@ -106,6 +106,14 @@ class SettingsScreen extends ConsumerWidget {
               showLicensePage(context: context);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.person_outline),
+            title: const Text('Developer'),
+            subtitle: const Text('Alucard Stormbringer'),
+            onTap: () {
+              _showDeveloperDialog(context);
+            },
+          ),
         ],
       ),
     );
@@ -299,6 +307,65 @@ class SettingsScreen extends ConsumerWidget {
               Icon(Icons.check, color: Theme.of(context).colorScheme.primary),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeveloperDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.person),
+            SizedBox(width: 12),
+            Text('Developer'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Akshay Sagar',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Assistant Professor, Computer Science & Information Technology, SIRT',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.code),
+              title: const Text('GitHub'),
+              subtitle: const Text('github.com/Alucard-Storm'),
+              onTap: () {
+                // You can add URL launcher here if needed
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('GitHub: github.com/Alucard-Storm'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
       ),
     );
   }
