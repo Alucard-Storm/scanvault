@@ -9,7 +9,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/document.dart';
+import '../../models/folder.dart'; // Import Folder
 import '../../providers/document_provider.dart';
+import '../../services/database_service.dart'; // Import DatabaseService
+import '../../services/ocr_service.dart'; // Import OcrService
+import '../../services/smart_naming_service.dart'; // Import SmartNamingService
 import '../../l10n/app_localizations.dart';
 
 /// Camera screen using google_mlkit_document_scanner
@@ -68,9 +72,53 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
     
     try {
       final now = DateTime.now();
-      final name = 'Scan ${now.toString().split('.')[0]}';
+      String name = 'Scan ${now.toString().split('.')[0]}';
+      String? folderId;
+      String? ocrText;
+
       final documentId = const Uuid().v4();
       
+      // Smart Naming & Categorization Logic
+      if (scannedPaths.isNotEmpty) {
+        try {
+           // 1. Extract text from the first page for analysis
+           // Clean path first as well
+           final cleanPath = scannedPaths.first.replaceFirst('file://', '');
+           final text = await OcrService.extractText(cleanPath);
+           
+           if (text.isNotEmpty) {
+             ocrText = text; // Store it so we don't have to re-OCR immediately if not needed
+             
+             final suggestion = SmartNamingService.analyzeContent(text);
+             
+             if (suggestion.name != null) {
+               name = suggestion.name!;
+             }
+             
+             if (suggestion.category != null) {
+               // Check if folder exists, if not create it
+               final existingFolder = await DatabaseService.getFolderByName(suggestion.category!);
+               if (existingFolder != null) {
+                 folderId = existingFolder.id;
+               } else {
+                 final newFolderId = const Uuid().v4();
+                 final newFolder = Folder(
+                   id: newFolderId,
+                   name: suggestion.category!,
+                   createdAt: DateTime.now(),
+                   iconName: 'folder', // Default icon
+                 );
+                 await DatabaseService.insertFolder(newFolder);
+                 folderId = newFolderId;
+               }
+             }
+           }
+        } catch (e) {
+          debugPrint('Smart naming failed: $e');
+          // Continue with default name/folder if smart naming fails
+        }
+      }
+
       // Get persistent directory
       final appDir = await getApplicationDocumentsDirectory();
       final vaultDir = Directory(p.join(appDir.path, 'ScanVault'));
@@ -106,6 +154,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
           imagePath: newPath,
           pageNumber: i + 1,
           appliedFilter: FilterType.original,
+          ocrText: (i == 0) ? ocrText : null, // Assign OCR text to the first page if we grabbed it
         ));
       }
 
@@ -120,6 +169,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
         modifiedAt: now,
         pages: pages,
         thumbnailPath: thumbnailPath!,
+        folderId: folderId,
+        ocrText: ocrText, // Store document-level OCR text
       );
 
       await ref.read(documentsProvider.notifier).addDocument(newDocument);

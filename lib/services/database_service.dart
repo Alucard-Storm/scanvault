@@ -280,6 +280,32 @@ class DatabaseService {
         .toList();
   }
 
+  /// Get a folder by name (case-insensitive)
+  static Future<Folder?> getFolderByName(String name) async {
+    final folders = await db.query(
+      'folders',
+      where: 'LOWER(name) = ?',
+      whereArgs: [name.toLowerCase()],
+    );
+
+    if (folders.isEmpty) return null;
+
+    final f = folders.first;
+    // We need to extend this query if we want document counts, but for quick lookup this is fine
+    // Or we can reuse existing logic but it's heavier.
+    // Let's keep it simple for now, document count 0 is acceptable for lookup.
+    
+    return Folder(
+      id: f['id'] as String,
+      name: f['name'] as String,
+      iconName: f['icon_name'] as String?,
+      colorValue: f['color_value'] as int,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(f['created_at'] as int),
+      documentCount: 0, 
+    );
+  }
+
+
   /// Delete a folder
   static Future<void> deleteFolder(String id) async {
     await db.delete('folders', where: 'id = ?', whereArgs: [id]);
