@@ -18,7 +18,12 @@ import '../../l10n/app_localizations.dart';
 
 /// Camera screen using google_mlkit_document_scanner
 class CameraScreen extends ConsumerStatefulWidget {
-  const CameraScreen({super.key});
+  final bool batchMode;
+
+  const CameraScreen({
+    super.key,
+    this.batchMode = true, // Default to batch mode (existing behavior)
+  });
 
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
@@ -41,7 +46,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       final options = DocumentScannerOptions(
         documentFormat: DocumentFormat.jpeg,
         mode: ScannerMode.full,
-        pageLimit: 100,
+        pageLimit: widget.batchMode ? 100 : 1, // 1 for single page, 100 for batch
       );
 
       final documentScanner = DocumentScanner(options: options);
@@ -50,6 +55,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       if (!mounted) return;
 
       if (result.images.isNotEmpty) {
+        // If single mode, user expects quick save. 
         await _saveDocument(result.images);
       } else {
         // User cancelled without scanning anything

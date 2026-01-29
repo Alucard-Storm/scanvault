@@ -225,8 +225,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       // Scan FAB
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'scan_fab',
-        onPressed: () => context.push('/camera'),
-        icon: const Icon(Icons.document_scanner_rounded),
+        onPressed: () => _showScanOptions(context),
+        icon: const Icon(Icons.add_a_photo_outlined),
         label: Text(l10n.scanFab),
       ).animate().scale(
             delay: 300.ms,
@@ -271,6 +271,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+  void _showScanOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.insert_drive_file),
+                title: const Text('Single Page'),
+                subtitle: const Text('Scan a single document quickly'),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/camera', extra: false);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy_all),
+                title: const Text('Batch Scan'),
+                subtitle: const Text('Scan multiple pages into one document'),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/camera', extra: true);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -535,6 +567,8 @@ class _DocumentListItem extends ConsumerWidget {
       }
     );
   }
+
+
 }
 
 class _DocumentGridItem extends StatelessWidget {

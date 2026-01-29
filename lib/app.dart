@@ -122,7 +122,10 @@ final _router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/camera',
       name: 'camera',
-      builder: (context, state) => const CameraScreen(),
+      builder: (context, state) {
+        final batchMode = state.extra as bool? ?? true;
+        return CameraScreen(batchMode: batchMode);
+      },
     ),
 
     // Editor - Edit scanned image
