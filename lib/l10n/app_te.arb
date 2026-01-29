@@ -111,5 +111,6 @@
     "storageCustom": "కస్టమ్ ఫోల్డర్‌ని ఎంచుకోండి...",
     "storageWriteError": "ఈ ఫోల్డర్‌లో రాయలేము: {error}",
     "chooseLanguage": "భాషను ఎంచుకోండి",
-    "moreOptions": "మరిన్ని ఎంపికలు"
+    "moreOptions": "మరిన్ని ఎంపికలు",
+    "useSystemColor": "సిస్టమ్ రంగులను ఉపయోగించండి"
 }

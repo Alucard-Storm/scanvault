@@ -13,3 +13,16 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
     state = mode;
   }
 }
+
+/// Provider for "Use system colors" preference
+final systemColorProvider = StateNotifierProvider<SystemColorNotifier, bool>((ref) {
+  return SystemColorNotifier();
+});
+
+class SystemColorNotifier extends StateNotifier<bool> {
+  SystemColorNotifier() : super(false);
+
+  void setUseSystemColor(bool useSystemColor) {
+    state = useSystemColor;
+  }
+}

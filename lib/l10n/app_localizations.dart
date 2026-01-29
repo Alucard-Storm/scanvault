@@ -791,6 +791,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More options'**
   String get moreOptions;
+
+  /// No description provided for @useSystemColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system colors'**
+  String get useSystemColor;
 }
 
 class _AppLocalizationsDelegate

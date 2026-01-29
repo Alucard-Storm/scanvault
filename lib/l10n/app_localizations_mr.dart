@@ -391,4 +391,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get moreOptions => 'अधिक पर्याय';
+
+  @override
+  String get useSystemColor => 'सिस्टम कलर्स वापरा';
 }

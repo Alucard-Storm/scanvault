@@ -391,4 +391,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get moreOptions => 'વધુ વિકલ્પો';
+
+  @override
+  String get useSystemColor => 'સિસ્ટમ કલર્સનો ઉપયોગ કરો';
 }

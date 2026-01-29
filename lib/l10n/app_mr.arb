@@ -111,5 +111,6 @@
     "storageCustom": "कस्टम फोल्डर निवडा...",
     "storageWriteError": "या फोल्डरमध्ये लिहू शकत नाही: {error}",
     "chooseLanguage": "भाषा निवडा",
-    "moreOptions": "अधिक पर्याय"
+    "moreOptions": "अधिक पर्याय",
+    "useSystemColor": "सिस्टम कलर्स वापरा"
 }

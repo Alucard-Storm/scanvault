@@ -111,5 +111,6 @@
     "storageCustom": "ਕਸਟਮ ਫੋਲਡਰ ਚੁਣੋ...",
     "storageWriteError": "ਇਸ ਫੋਲਡਰ ਵਿੱਚ ਲਿਖਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ: {error}",
     "chooseLanguage": "ਭਾਸ਼ਾ ਚੁਣੋ",
-    "moreOptions": "ਹੋਰ ਵਿਕਲਪ"
+    "moreOptions": "ਹੋਰ ਵਿਕਲਪ",
+    "useSystemColor": "ਸਿਸਟਮ ਰੰਗਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ"
 }

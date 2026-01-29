@@ -392,4 +392,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get moreOptions => 'మరిన్ని ఎంపికలు';
+
+  @override
+  String get useSystemColor => 'సిస్టమ్ రంగులను ఉపయోగించండి';
 }

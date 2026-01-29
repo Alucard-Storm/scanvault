@@ -393,4 +393,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get moreOptions => 'കൂടുതൽ ഓപ്ഷനുകൾ';
+
+  @override
+  String get useSystemColor => 'സിസ്റ്റം കളറുകൾ ഉപയോഗിക്കുക';
 }

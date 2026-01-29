@@ -391,4 +391,7 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get moreOptions => 'ਹੋਰ ਵਿਕਲਪ';
+
+  @override
+  String get useSystemColor => 'ਸਿਸਟਮ ਰੰਗਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ';
 }

@@ -47,6 +47,14 @@ class SettingsScreen extends ConsumerWidget {
               _showThemePicker(context, ref, themeMode);
             },
           ),
+          SwitchListTile(
+            secondary: const Icon(Icons.palette_outlined),
+            title: Text(l10n.useSystemColor),
+            value: ref.watch(systemColorProvider),
+            onChanged: (value) {
+              ref.read(systemColorProvider.notifier).setUseSystemColor(value);
+            },
+          ),
           const Divider(),
 
           // Storage section

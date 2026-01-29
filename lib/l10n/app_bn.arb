@@ -111,5 +111,6 @@
     "storageCustom": "কাস্টম ফোল্ডার নির্বাচন করুন...",
     "storageWriteError": "এই ফোল্ডারে লেখা সম্ভব নয়: {error}",
     "chooseLanguage": "ভাষা চয়ন করুন",
-    "moreOptions": "আরও বিকল্প"
+    "moreOptions": "আরও বিকল্প",
+    "useSystemColor": "სਿਸਟਮ কালার ব্যবহার করুন"
 }

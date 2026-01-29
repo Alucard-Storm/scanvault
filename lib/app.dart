@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
@@ -25,24 +26,37 @@ class ScanVaultApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final useSystemColor = ref.watch(systemColorProvider);
     final locale = ref.watch(localeProvider);
     debugPrint('ScanVaultApp: Rebuilding with locale ${locale.languageCode}');
 
-    return MaterialApp.router(
-      title: 'ScanVault',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: themeMode,
-      locale: locale,
-      routerConfig: _router,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: AppLocalizations.supportedLocales,
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        ColorScheme? lightScheme;
+        ColorScheme? darkScheme;
+
+        if (useSystemColor && lightDynamic != null && darkDynamic != null) {
+          lightScheme = lightDynamic;
+          darkScheme = darkDynamic;
+        }
+
+        return MaterialApp.router(
+          title: 'ScanVault',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light(dynamicColorScheme: lightScheme),
+          darkTheme: AppTheme.dark(dynamicColorScheme: darkScheme),
+          themeMode: themeMode,
+          locale: locale,
+          routerConfig: _router,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+        );
+      },
     );
   }
 }

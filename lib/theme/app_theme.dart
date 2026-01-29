@@ -6,9 +6,11 @@ class AppTheme {
   AppTheme._();
 
   /// Light theme
-  static ThemeData get light => ThemeData(
+  static ThemeData light({ColorScheme? dynamicColorScheme}) {
+    final colorScheme = dynamicColorScheme ?? ColorSchemes.light;
+    return ThemeData(
         useMaterial3: true,
-        colorScheme: ColorSchemes.light,
+        colorScheme: colorScheme,
         brightness: Brightness.light,
 
         // App bar theme
@@ -16,12 +18,12 @@ class AppTheme {
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 2,
-          backgroundColor: ColorSchemes.light.surface,
-          foregroundColor: ColorSchemes.light.onSurface,
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
           titleTextStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: ColorSchemes.light.onSurface,
+            color: colorScheme.onSurface,
           ),
         ),
 
@@ -38,32 +40,32 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: ColorSchemes.light.primary,
-          foregroundColor: ColorSchemes.light.onPrimary,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
         ),
 
         // Bottom navigation bar theme
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           type: BottomNavigationBarType.fixed,
           elevation: 8,
-          backgroundColor: ColorSchemes.light.surface,
-          selectedItemColor: ColorSchemes.light.primary,
-          unselectedItemColor: ColorSchemes.light.onSurfaceVariant,
+          backgroundColor: colorScheme.surface,
+          selectedItemColor: colorScheme.primary,
+          unselectedItemColor: colorScheme.onSurfaceVariant,
         ),
 
         // Navigation bar theme (Material 3)
         navigationBarTheme: NavigationBarThemeData(
           elevation: 0,
           height: 80,
-          backgroundColor: ColorSchemes.light.surface,
-          indicatorColor: ColorSchemes.light.primaryContainer,
+          backgroundColor: colorScheme.surface,
+          indicatorColor: colorScheme.primaryContainer,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         ),
 
         // Input decoration theme
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: ColorSchemes.light.surfaceContainerHighest,
+          fillColor: colorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -75,7 +77,7 @@ class AppTheme {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: ColorSchemes.light.primary,
+              color: colorScheme.primary,
               width: 2,
             ),
           ),
@@ -92,10 +94,10 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          backgroundColor: ColorSchemes.light.surfaceContainerHighest,
-          selectedColor: ColorSchemes.light.primaryContainer,
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          selectedColor: colorScheme.primaryContainer,
           labelStyle: TextStyle(
-            color: ColorSchemes.light.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
 
@@ -113,21 +115,24 @@ class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
-          backgroundColor: ColorSchemes.light.surface,
+          backgroundColor: colorScheme.surface,
         ),
 
         // Divider theme
         dividerTheme: DividerThemeData(
-          color: ColorSchemes.light.outlineVariant,
+          color: colorScheme.outlineVariant,
           thickness: 1,
           space: 1,
         ),
       );
+  }
 
   /// Dark theme
-  static ThemeData get dark => ThemeData(
+  static ThemeData dark({ColorScheme? dynamicColorScheme}) {
+    final colorScheme = dynamicColorScheme ?? ColorSchemes.dark;
+    return ThemeData(
         useMaterial3: true,
-        colorScheme: ColorSchemes.dark,
+        colorScheme: colorScheme,
         brightness: Brightness.dark,
 
         // App bar theme
@@ -135,12 +140,12 @@ class AppTheme {
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 2,
-          backgroundColor: ColorSchemes.dark.surface,
-          foregroundColor: ColorSchemes.dark.onSurface,
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
           titleTextStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: ColorSchemes.dark.onSurface,
+            color: colorScheme.onSurface,
           ),
         ),
 
@@ -157,32 +162,32 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: ColorSchemes.dark.primary,
-          foregroundColor: ColorSchemes.dark.onPrimary,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
         ),
 
         // Bottom navigation bar theme
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           type: BottomNavigationBarType.fixed,
           elevation: 8,
-          backgroundColor: ColorSchemes.dark.surface,
-          selectedItemColor: ColorSchemes.dark.primary,
-          unselectedItemColor: ColorSchemes.dark.onSurfaceVariant,
+          backgroundColor: colorScheme.surface,
+          selectedItemColor: colorScheme.primary,
+          unselectedItemColor: colorScheme.onSurfaceVariant,
         ),
 
         // Navigation bar theme (Material 3)
         navigationBarTheme: NavigationBarThemeData(
           elevation: 0,
           height: 80,
-          backgroundColor: ColorSchemes.dark.surface,
-          indicatorColor: ColorSchemes.dark.primaryContainer,
+          backgroundColor: colorScheme.surface,
+          indicatorColor: colorScheme.primaryContainer,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         ),
 
         // Input decoration theme
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: ColorSchemes.dark.surfaceContainerHighest,
+          fillColor: colorScheme.surfaceContainerHighest,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -194,7 +199,7 @@ class AppTheme {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: ColorSchemes.dark.primary,
+              color: colorScheme.primary,
               width: 2,
             ),
           ),
@@ -211,10 +216,10 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          backgroundColor: ColorSchemes.dark.surfaceContainerHighest,
-          selectedColor: ColorSchemes.dark.primaryContainer,
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          selectedColor: colorScheme.primaryContainer,
           labelStyle: TextStyle(
-            color: ColorSchemes.dark.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
 
@@ -232,14 +237,15 @@ class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
-          backgroundColor: ColorSchemes.dark.surface,
+          backgroundColor: colorScheme.surface,
         ),
 
         // Divider theme
         dividerTheme: DividerThemeData(
-          color: ColorSchemes.dark.outlineVariant,
+          color: colorScheme.outlineVariant,
           thickness: 1,
           space: 1,
         ),
       );
+  }
 }

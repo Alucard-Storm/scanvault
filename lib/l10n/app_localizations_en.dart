@@ -391,4 +391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moreOptions => 'More options';
+
+  @override
+  String get useSystemColor => 'Use system colors';
 }

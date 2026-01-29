@@ -392,4 +392,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get moreOptions => 'மேலும் விருப்பங்கள்';
+
+  @override
+  String get useSystemColor => 'கணினி வண்ணங்களைப் பயன்படுத்தவும்';
 }

@@ -392,4 +392,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get moreOptions => 'আরও বিকল্প';
+
+  @override
+  String get useSystemColor => 'სਿਸਟਮ কালার ব্যবহার করুন';
 }

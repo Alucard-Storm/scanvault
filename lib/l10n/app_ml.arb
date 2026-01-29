@@ -111,5 +111,6 @@
     "storageCustom": "കസ്റ്റം ഫോൾഡർ തിരഞ്ഞെടുക്കുക...",
     "storageWriteError": "ഈ ഫോൾഡറിലേക്ക് എഴുതാൻ കഴിയില്ല: {error}",
     "chooseLanguage": "ഭാഷ തിരഞ്ഞെടുക്കുക",
-    "moreOptions": "കൂടുതൽ ഓപ്ഷനുകൾ"
+    "moreOptions": "കൂടുതൽ ഓപ്ഷനുകൾ",
+    "useSystemColor": "സിസ്റ്റം കളറുകൾ ഉപയോഗിക്കുക"
 }

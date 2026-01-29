@@ -111,5 +111,6 @@
     "storageCustom": "ಕಸ್ಟಮ್ ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ...",
     "storageWriteError": "ಈ ಫೋಲ್ಡರ್‌ಗೆ ಬರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ: {error}",
     "chooseLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
-    "moreOptions": "ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು"
+    "moreOptions": "ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು",
+    "useSystemColor": "ಸಿಸ್ಟಮ್ ಬಣ್ಣಗಳನ್ನು ಬಳಸಿ"
 }

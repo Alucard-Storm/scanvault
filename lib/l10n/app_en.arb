@@ -111,5 +111,6 @@
     "storageCustom": "Select Custom Folder...",
     "storageWriteError": "Cannot write to this folder: {error}",
     "chooseLanguage": "Choose Language",
-    "moreOptions": "More options"
+    "moreOptions": "More options",
+    "useSystemColor": "Use system colors"
 }

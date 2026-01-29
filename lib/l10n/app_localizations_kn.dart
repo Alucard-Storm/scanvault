@@ -392,4 +392,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get moreOptions => 'ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು';
+
+  @override
+  String get useSystemColor => 'ಸಿಸ್ಟಮ್ ಬಣ್ಣಗಳನ್ನು ಬಳಸಿ';
 }
