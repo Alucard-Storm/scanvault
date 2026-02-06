@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -11,13 +13,21 @@ class AdService {
 
   AdService._internal();
 
+  final Completer<void> _initCompleter = Completer<void>();
+  Future<void> get ready => _initCompleter.future;
+
   Future<void> initialize() async {
     await MobileAds.instance.initialize();
+    _initCompleter.complete();
   }
 
   String get nativeAdUnitId {
     if (Platform.isAndroid) {
-       return 'ca-app-pub-2538803092410782/7829243615'; 
+      if (kDebugMode) {
+        return 'ca-app-pub-3940256099942544/2247696110'; // Test ID
+      } else {
+        return 'ca-app-pub-2538803092410782/7829243615'; // Real ID
+      }
     } else {
       throw UnsupportedError('Unsupported platform');
     }

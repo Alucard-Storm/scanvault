@@ -352,7 +352,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Chip(
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.9),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9),
                 label: Text(
                   l10n.pageCount((_currentPageIndex + 1).toString(), document.pages.length.toString()),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(

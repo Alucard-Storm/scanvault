@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../providers/locale_provider.dart';
@@ -29,7 +30,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _loadAd();
   }
 
-  void _loadAd() {
+  Future<void> _loadAd() async {
+    await AdService().ready;
+    if (!mounted) return;
+
     _nativeAd = AdService().loadNativeAd(
       onAdLoaded: (ad) {
         setState(() {
@@ -60,18 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
       body: ListView(
         children: [
-          // Native Ad
-          if (_nativeAdIsLoaded && _nativeAd != null)
-            Container(
-              height: 100, // Small template height
-              width: double.infinity,
-              padding: const EdgeInsets.all(8.0),
-              child: AdWidget(ad: _nativeAd!),
-            ),
-          
-          if (_nativeAdIsLoaded) const Divider(),
 
-          // Appearance section
           _buildSectionHeader(context, l10n.settingsAppearance),
           ListTile(
             leading: const Icon(Icons.language),
@@ -162,6 +155,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               _showDeveloperDialog(context);
             },
           ),
+          
+          const Divider(),
+          
+          // Native Ad
+          if (_nativeAdIsLoaded && _nativeAd != null)
+            Container(
+              height: 100, // Small template height
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: AdWidget(ad: _nativeAd!),
+            )
+          else
+            Container(
+              height: 100,
+              width: double.infinity,
+              margin: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8),
+                    Text('Loading Ad...'),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -393,16 +418,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             const SizedBox(height: 8),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.code),
-              title: const Text('GitHub'),
+              leading: const Icon(Icons.link),
+              title: const Text('GitHub Profile'),
               subtitle: const Text('github.com/Alucard-Storm'),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('GitHub: github.com/Alucard-Storm'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
+              onTap: () async {
+                final uri = Uri.parse('https://github.com/Alucard-Storm');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
+              },
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.code),
+              title: const Text('Source Code'),
+              subtitle: const Text('github.com/Alucard-Storm/scanvault'),
+              onTap: () async {
+                final uri = Uri.parse('https://github.com/Alucard-Storm/scanvault');
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri);
+                }
               },
             ),
           ],

@@ -18,9 +18,16 @@ void main() async {
   ]);
 
   // Initialize services
-  await DatabaseService.initialize();
-  final storageService = await StorageService.init();
-  await AdService().initialize();
+  // Start AdMob initialization in the background (fire-and-forget)
+  AdService().initialize();
+
+  // Initialize critical services in parallel
+  final results = await Future.wait([
+    DatabaseService.initialize(),
+    StorageService.init(),
+  ]);
+
+  final storageService = results[1] as StorageService;
 
   runApp(
     ProviderScope(
