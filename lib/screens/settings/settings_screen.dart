@@ -2,19 +2,55 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/storage_service.dart';
+import '../../services/ad_service.dart';
 
 /// Settings screen
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  NativeAd? _nativeAd;
+  bool _nativeAdIsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAd();
+  }
+
+  void _loadAd() {
+    _nativeAd = AdService().loadNativeAd(
+      onAdLoaded: (ad) {
+        setState(() {
+          _nativeAdIsLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        print('Ad load failed (code=${error.code} message=${error.message})');
+      },
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final l10n = AppLocalizations.of(context)!;
 
@@ -24,6 +60,17 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          // Native Ad
+          if (_nativeAdIsLoaded && _nativeAd != null)
+            Container(
+              height: 100, // Small template height
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: AdWidget(ad: _nativeAd!),
+            ),
+          
+          if (_nativeAdIsLoaded) const Divider(),
+
           // Appearance section
           _buildSectionHeader(context, l10n.settingsAppearance),
           ListTile(
@@ -77,7 +124,8 @@ class SettingsScreen extends ConsumerWidget {
                         tooltip: l10n.resetToDefault,
                         onPressed: () async {
                            await storageService.resetToDefault();
-                            (context as Element).markNeedsBuild(); 
+                            // Force rebuild is handled by provider watch usually, but if not we might need setState
+                            setState(() {}); 
                         },
                       )
                     : const Icon(Icons.chevron_right),
@@ -134,7 +182,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
   
-  // Updated Helper to use localized strings
   String _getThemeModeName(BuildContext context, ThemeMode mode) {
     final l10n = AppLocalizations.of(context)!;
     return switch (mode) {
@@ -143,8 +190,6 @@ class SettingsScreen extends ConsumerWidget {
       ThemeMode.dark => l10n.themeDark,
     };
   }
-
-  // .. _buildThemeOption remains same ..
 
   Widget _buildThemeOption(BuildContext context, WidgetRef ref, String label, ThemeMode mode, ThemeMode current) {
     return RadioListTile<ThemeMode>(
@@ -160,7 +205,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  
   Future<void> _showClearCacheDialog(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     return showDialog(
@@ -217,6 +261,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
   Future<void> _showStoragePicker(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<String>(
@@ -244,18 +289,21 @@ class SettingsScreen extends ConsumerWidget {
 
     if (result == 'default') {
       await ref.read(storageServiceProvider).resetToDefault();
-       if (context.mounted) (context as Element).markNeedsBuild();
+       if (context.mounted) {
+         setState(() {});
+       }
     } else if (result == 'custom') {
       final String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory != null) {
-        // Verify we can write to it
         try {
           final testFile = File('$selectedDirectory/.test');
           await testFile.writeAsString('test');
           await testFile.delete();
           
           await ref.read(storageServiceProvider).setCustomStoragePath(selectedDirectory);
-           if (context.mounted) (context as Element).markNeedsBuild();
+           if (context.mounted) {
+             setState(() {});
+           }
         } catch (e) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -349,7 +397,6 @@ class SettingsScreen extends ConsumerWidget {
               title: const Text('GitHub'),
               subtitle: const Text('github.com/Alucard-Storm'),
               onTap: () {
-                // You can add URL launcher here if needed
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('GitHub: github.com/Alucard-Storm'),
