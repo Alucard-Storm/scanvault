@@ -90,6 +90,7 @@
     "exportAction": "ರಫ್ತು",
     "exportFormat": "ಸ್ವರೂಪ",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "ಚಿತ್ರಗಳು",
     "scannedImagesFrom": "{name} ನಿಂದ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಚಿತ್ರಗಳು",
     "settingsAppearance": "ಗೋಚರತೆ",

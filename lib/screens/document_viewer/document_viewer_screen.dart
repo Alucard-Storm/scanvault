@@ -12,6 +12,8 @@ import 'package:uuid/uuid.dart';
 import '../../models/document.dart';
 import '../../providers/document_provider.dart';
 import '../../services/pdf_service.dart';
+import '../../services/docx_service.dart';
+import '../../services/export_service.dart';
 
 import '../../services/storage_service.dart';
 import '../tags/tags_sheet.dart';
@@ -142,7 +144,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     );
   }
 
-  void _sharePdf(Document document) async {
+  void _shareDocument(Document document) async {
     if (_isProcessing) return;
 
     // Show options dialog
@@ -156,16 +158,36 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
     setState(() => _isProcessing = true);
 
     try {
+      final format = result['format'] as ExportFormat;
       final includeOcr = result['includeOcr'] as bool;
       final selectedIndices = result['selectedIndices'] as List<int>;
 
-      final pdfPath = await PdfService.generatePdf(
-        document,
-        includeOcrText: includeOcr,
-        selectedPageIndices: selectedIndices,
-      );
-      
-      await Share.shareXFiles([XFile(pdfPath)], text: document.name);
+      switch (format) {
+        case ExportFormat.pdf:
+          final pdfPath = await PdfService.generatePdf(
+            document,
+            includeOcrText: includeOcr,
+            selectedPageIndices: selectedIndices,
+          );
+          await Share.shareXFiles([XFile(pdfPath)], text: document.name);
+          break;
+        
+        case ExportFormat.docx:
+          final docxPath = await DocxService.generateDocx(
+            document,
+            includeOcrText: includeOcr,
+            selectedPageIndices: selectedIndices,
+          );
+          await Share.shareXFiles([XFile(docxPath)], text: document.name);
+          break;
+        
+        case ExportFormat.image:
+          await ExportService.shareImages(
+            document,
+            selectedPageIndices: selectedIndices,
+          );
+          break;
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -376,8 +398,8 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
           children: [
             IconButton(
               icon: const Icon(Icons.share_outlined),
-              onPressed: () => _sharePdf(document),
-              tooltip: l10n.sharePdf,
+              onPressed: () => _shareDocument(document),
+              tooltip: l10n.share,
             ),
              IconButton(
               icon: const Icon(Icons.crop_rotate), // changed from edit to crop/edit visual

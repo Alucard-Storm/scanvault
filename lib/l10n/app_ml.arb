@@ -90,6 +90,7 @@
     "exportAction": "എക്‌സ്‌പോർട്ട്",
     "exportFormat": "ഫോർമാറ്റ്",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "ചിത്രങ്ങൾ",
     "scannedImagesFrom": "{name}-ൽ നിന്ന് സ്കാൻ ചെയ്ത ചിത്രങ്ങൾ",
     "settingsAppearance": "കാഴ്ച",

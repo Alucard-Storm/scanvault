@@ -90,6 +90,7 @@
     "exportAction": "Export",
     "exportFormat": "Format",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "Images",
     "scannedImagesFrom": "Scanned images from {name}",
     "settingsAppearance": "Appearance",

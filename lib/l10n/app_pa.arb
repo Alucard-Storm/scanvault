@@ -90,6 +90,7 @@
     "exportAction": "ਨਿਰਯਾਤ",
     "exportFormat": "ਫਾਰਮੈਟ",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "ਤਸਵੀਰਾਂ",
     "scannedImagesFrom": "{name} ਤੋਂ ਸਕੈਨ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ",
     "settingsAppearance": "ਦਿੱਖ",

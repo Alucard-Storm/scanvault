@@ -90,6 +90,7 @@
     "exportAction": "ஏற்றுமதி",
     "exportFormat": "வடிவம்",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "படங்கள்",
     "scannedImagesFrom": "{name}-லிருந்து ஸ்கேன் செய்யப்பட்ட படங்கள்",
     "settingsAppearance": "தோற்றம்",

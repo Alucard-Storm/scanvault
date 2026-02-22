@@ -322,6 +322,9 @@ class AppLocalizationsMl extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
+  String get docx => 'DOCX';
+
+  @override
   String get images => 'ചിത്രങ്ങൾ';
 
   @override

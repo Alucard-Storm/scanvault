@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/document.dart';
 import '../../l10n/app_localizations.dart';
 
-enum ExportFormat { pdf, image }
+enum ExportFormat { pdf, docx, image }
 
 class ShareOptionsDialog extends StatefulWidget {
   final Document document;
@@ -49,30 +49,33 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
           children: [
             // Export Format Selection
             Text(l10n.exportFormat, style: Theme.of(context).textTheme.titleSmall),
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: RadioListTile<ExportFormat>(
-                    title: Text(l10n.pdf),
-                    value: ExportFormat.pdf,
-                    groupValue: _exportFormat,
-                    contentPadding: EdgeInsets.zero,
-                    onChanged: (value) => setState(() => _exportFormat = value!),
-                  ),
+                RadioListTile<ExportFormat>(
+                  title: Text(l10n.pdf),
+                  value: ExportFormat.pdf,
+                  groupValue: _exportFormat,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (value) => setState(() => _exportFormat = value!),
                 ),
-                Expanded(
-                  child: RadioListTile<ExportFormat>(
-                    title: Text(l10n.images),
-                    value: ExportFormat.image,
-                    groupValue: _exportFormat,
-                    contentPadding: EdgeInsets.zero,
-                    onChanged: (value) => setState(() {
-                      _exportFormat = value!;
-                      if (_exportFormat == ExportFormat.image) {
-                        _includeOcrText = false;
-                      }
-                    }),
-                  ),
+                RadioListTile<ExportFormat>(
+                  title: Text(l10n.docx),
+                  value: ExportFormat.docx,
+                  groupValue: _exportFormat,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (value) => setState(() => _exportFormat = value!),
+                ),
+                RadioListTile<ExportFormat>(
+                  title: Text(l10n.images),
+                  value: ExportFormat.image,
+                  groupValue: _exportFormat,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (value) => setState(() {
+                    _exportFormat = value!;
+                    if (_exportFormat == ExportFormat.image) {
+                      _includeOcrText = false;
+                    }
+                  }),
                 ),
               ],
             ),
@@ -87,7 +90,7 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
                onChanged: _exportFormat == ExportFormat.image 
                   ? null 
                   : (val) => setState(() => _includeOcrText = val ?? false),
-               enabled: _exportFormat == ExportFormat.pdf && widget.document.ocrText != null && widget.document.ocrText!.isNotEmpty,
+               enabled: (_exportFormat == ExportFormat.pdf || _exportFormat == ExportFormat.docx) && widget.document.ocrText != null && widget.document.ocrText!.isNotEmpty,
              ),
              
              const Divider(),

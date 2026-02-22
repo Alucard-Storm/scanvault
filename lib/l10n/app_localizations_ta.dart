@@ -321,6 +321,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
+  String get docx => 'DOCX';
+
+  @override
   String get images => 'படங்கள்';
 
   @override

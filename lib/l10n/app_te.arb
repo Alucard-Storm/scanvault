@@ -90,6 +90,7 @@
     "exportAction": "ఎగుమతి",
     "exportFormat": "ఫార్మాట్",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "చిత్రాలు",
     "scannedImagesFrom": "{name} నుండి స్కాన్ చేసిన చిత్రాలు",
     "settingsAppearance": "కనిపించు విధానం",

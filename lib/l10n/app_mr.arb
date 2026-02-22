@@ -90,6 +90,7 @@
     "exportAction": "निर्यात",
     "exportFormat": "फॉरमॅट",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "प्रतिमा",
     "scannedImagesFrom": "{name} मधून स्कॅन केलेल्या प्रतिमा",
     "settingsAppearance": "दिसणे",

@@ -660,6 +660,12 @@ abstract class AppLocalizations {
   /// **'PDF'**
   String get pdf;
 
+  /// No description provided for @docx.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCX'**
+  String get docx;
+
   /// No description provided for @images.
   ///
   /// In en, this message translates to:

@@ -90,6 +90,7 @@
     "exportAction": "রপ্তানি",
     "exportFormat": "বিন্যাস",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "ছবি",
     "scannedImagesFrom": "{name} থেকে স্ক্যান করা ছবি",
     "settingsAppearance": "চেহারা",

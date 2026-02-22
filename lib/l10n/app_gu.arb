@@ -90,6 +90,7 @@
     "exportAction": "નિકાસ કરો",
     "exportFormat": "ફોર્મેટ",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "છબીઓ",
     "scannedImagesFrom": "{name} માંથી સ્કેન કરેલી છબીઓ",
     "settingsAppearance": "દેખાવ",

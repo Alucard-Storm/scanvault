@@ -34,6 +34,7 @@ dependencies:
   # PDF & Document Export
   pdf: ^3.11.2
   printing: ^5.13.4
+  archive: ^3.6.1
   
   # Local Storage
   sqflite: ^2.4.2

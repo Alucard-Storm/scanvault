@@ -90,6 +90,7 @@
     "exportAction": "निर्यात",
     "exportFormat": "प्रारूप",
     "pdf": "PDF",
+    "docx": "DOCX",
     "images": "छवियां",
     "scannedImagesFrom": "{name} से स्कैन की गई छवियां",
     "settingsAppearance": "दिखावट",
