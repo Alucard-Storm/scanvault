@@ -51,16 +51,20 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
       );
 
       final documentScanner = DocumentScanner(options: options);
-      final result = await documentScanner.scanDocument();
-      
-      if (!mounted) return;
+      try {
+        final result = await documentScanner.scanDocument();
 
-      if (result.images.isNotEmpty) {
-        // If single mode, user expects quick save. 
-        await _saveDocument(result.images);
-      } else {
-        // User cancelled without scanning anything
-        if (mounted) context.pop();
+        if (!mounted) return;
+
+        if (result.images.isNotEmpty) {
+          // If single mode, user expects quick save.
+          await _saveDocument(result.images);
+        } else {
+          // User cancelled without scanning anything
+          if (mounted) context.pop();
+        }
+      } finally {
+        documentScanner.close();
       }
     } catch (e) {
       debugPrint('Error scanning: $e');
@@ -175,7 +179,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
         createdAt: now,
         modifiedAt: now,
         pages: pages,
-        thumbnailPath: thumbnailPath!,
+        thumbnailPath: thumbnailPath ?? pages.first.imagePath,
         folderId: folderId,
         ocrText: ocrText, // Store document-level OCR text
       );

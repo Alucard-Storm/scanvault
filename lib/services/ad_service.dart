@@ -17,6 +17,7 @@ class AdService {
   Future<void> get ready => _initCompleter.future;
 
   Future<void> initialize() async {
+    if (_initCompleter.isCompleted) return;
     await MobileAds.instance.initialize();
     _initCompleter.complete();
   }

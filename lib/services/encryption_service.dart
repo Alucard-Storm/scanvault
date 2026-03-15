@@ -35,6 +35,9 @@ class EncryptionService {
     await _storage.delete(key: 'folder_key_$folderId');
   }
 
+  // Magic header prepended to every encrypted file (4 bytes: 0x45 0x4E 0x43 0x3A = "ENC:")
+  static final _encryptedMagic = [0x45, 0x4E, 0x43, 0x3A];
+
   /// Encrypt a file
   static Future<void> encryptFile(String filePath, String folderId) async {
     try {
@@ -42,6 +45,9 @@ class EncryptionService {
       if (keyString == null) {
         throw Exception('Encryption key not found for folder');
       }
+
+      // Skip if already encrypted
+      if (await isFileEncrypted(filePath)) return;
 
       final key = Key.fromBase64(keyString);
       final iv = IV.fromSecureRandom(16);
@@ -54,8 +60,12 @@ class EncryptionService {
       // Encrypt
       final encrypted = encrypter.encryptBytes(bytes, iv: iv);
 
-      // Write encrypted file with IV prepended
-      final encryptedBytes = Uint8List.fromList([...iv.bytes, ...encrypted.bytes]);
+      // Write: magic header (4) + IV (16) + encrypted data
+      final encryptedBytes = Uint8List.fromList([
+        ..._encryptedMagic,
+        ...iv.bytes,
+        ...encrypted.bytes,
+      ]);
       
       // Create encrypted file path
       final dir = p.dirname(filePath);
@@ -84,18 +94,21 @@ class EncryptionService {
         throw Exception('Encryption key not found for folder');
       }
 
+      // Skip if not actually encrypted
+      if (!await isFileEncrypted(filePath)) return;
+
       final key = Key.fromBase64(keyString);
       final encrypter = Encrypter(AES(key));
 
       // Read encrypted file
       final file = File(filePath);
-      final encryptedBytes = await file.readAsBytes();
+      final allBytes = await file.readAsBytes();
 
-      // Extract IV (first 16 bytes)
-      final iv = IV(Uint8List.fromList(encryptedBytes.sublist(0, 16)));
+      // Skip magic header (4 bytes), extract IV (next 16 bytes)
+      final iv = IV(Uint8List.fromList(allBytes.sublist(4, 20)));
       
-      // Extract encrypted data (remaining bytes)
-      final encrypted = Encrypted(Uint8List.fromList(encryptedBytes.sublist(16)));
+      // Extract encrypted data (remaining bytes after header + IV)
+      final encrypted = Encrypted(Uint8List.fromList(allBytes.sublist(20)));
 
       // Decrypt
       final decrypted = encrypter.decryptBytes(encrypted, iv: iv);
@@ -133,15 +146,22 @@ class EncryptionService {
     }
   }
 
-  /// Check if a file is encrypted (has IV prepended)
+  /// Check if a file is encrypted (checks for magic header "ENC:")
   static Future<bool> isFileEncrypted(String filePath) async {
     try {
       final file = File(filePath);
       if (!await file.exists()) return false;
       
-      final bytes = await file.readAsBytes();
-      // Check if file is at least 16 bytes (IV size) + some data
-      return bytes.length > 16;
+      // Read only the first 4 bytes to check for magic header
+      final raf = await file.open();
+      final header = await raf.read(4);
+      await raf.close();
+
+      if (header.length < 4) return false;
+      return header[0] == _encryptedMagic[0] &&
+             header[1] == _encryptedMagic[1] &&
+             header[2] == _encryptedMagic[2] &&
+             header[3] == _encryptedMagic[3];
     } catch (e) {
       return false;
     }

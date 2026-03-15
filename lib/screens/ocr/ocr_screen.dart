@@ -46,6 +46,7 @@ class _OcrScreenState extends ConsumerState<OcrScreen> {
   @override
   void dispose() {
     _textController.dispose();
+    OcrService.dispose();
     super.dispose();
   }
 

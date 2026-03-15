@@ -30,6 +30,11 @@ class DocxService {
 
       // Collect images and build content
       final contentParts = <String>[];
+
+      // Pre-calculate which pages will actually be exported
+      final exportedIndices = List.generate(document.pages.length, (i) => i)
+          .where((i) => selectedPageIndices == null || selectedPageIndices.contains(i))
+          .toList();
       
       for (int i = 0; i < document.pages.length; i++) {
         if (selectedPageIndices != null && !selectedPageIndices.contains(i)) {
@@ -71,8 +76,8 @@ class DocxService {
           contentParts.add(_createParagraph(page.ocrText!));
         }
         
-        // Add page break (except for last page)
-        if (i < document.pages.length - 1) {
+        // Add page break (except for last exported page)
+        if (i != exportedIndices.last) {
           contentParts.add(_createPageBreak());
         }
         

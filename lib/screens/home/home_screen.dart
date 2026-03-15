@@ -73,6 +73,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final documentsAsync = ref.watch(documentsProvider);
     final l10n = AppLocalizations.of(context)!;
 
+    // Clear stale selection whenever documents reload
+    ref.listen(documentsProvider, (previous, next) {
+      if (next is AsyncData && _isSelectionMode) {
+        _exitSelectionMode();
+      }
+    });
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [

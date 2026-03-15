@@ -225,7 +225,7 @@ class DatabaseService {
     return documents;
   }
 
-  /// Update a document
+  /// Update a document (including pages and tags)
   static Future<void> updateDocument(Document document) async {
     await db.update(
       'documents',
@@ -239,9 +239,41 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [document.id],
     );
+
+    // Sync pages: delete existing and re-insert
+    await db.delete('pages', where: 'document_id = ?', whereArgs: [document.id]);
+    for (final page in document.pages) {
+      await insertPage(document.id, page);
+    }
+
+    // Sync tags: delete existing associations and re-insert
+    await db.delete('document_tags', where: 'document_id = ?', whereArgs: [document.id]);
+    for (final tagId in document.tagIds) {
+      await db.insert('document_tags', {
+        'document_id': document.id,
+        'tag_id': tagId,
+      });
+    }
   }
 
-  /// Delete a document
+  /// Delete a document and all its associated image files from disk
+  static Future<void> deleteDocumentWithFiles(String id) async {
+    final doc = await getDocument(id);
+    if (doc != null) {
+      for (final page in doc.pages) {
+        await File(page.imagePath).delete().catchError((_) {});
+        if (page.processedImagePath != null) {
+          await File(page.processedImagePath!).delete().catchError((_) {});
+        }
+      }
+      if (doc.thumbnailPath != null) {
+        await File(doc.thumbnailPath!).delete().catchError((_) {});
+      }
+    }
+    await db.delete('documents', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// Delete a document (DB rows only, no file cleanup)
   static Future<void> deleteDocument(String id) async {
     await db.delete('documents', where: 'id = ?', whereArgs: [id]);
   }

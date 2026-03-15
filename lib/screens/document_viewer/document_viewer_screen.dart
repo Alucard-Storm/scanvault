@@ -62,13 +62,14 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
       );
 
       final documentScanner = DocumentScanner(options: options);
-      final result = await documentScanner.scanDocument();
-      
-      if (!mounted) return;
+      try {
+        final result = await documentScanner.scanDocument();
 
-      if (result.images.isNotEmpty) {
-        // Move to persistent storage and update document
-        var currentPages = [...document.pages];
+        if (!mounted) return;
+
+        if (result.images.isNotEmpty) {
+          // Move to persistent storage and update document
+          var currentPages = [...document.pages];
         
         // Actually, let's stick to what was there but adapted
         for (final scannedPath in result.images) {
@@ -103,6 +104,9 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
               SnackBar(content: Text(AppLocalizations.of(context)!.pagesAdded(result.images.length.toString()))),
             );
         }
+      }
+      } finally {
+        documentScanner.close();
       }
     } catch (e) {
       if (mounted) {

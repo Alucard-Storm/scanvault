@@ -140,6 +140,12 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       String? processedPath;
       
       if (_selectedFilter != FilterType.original) {
+        // Delete old processed file to avoid orphaned files accumulating on disk
+        if (targetPage.processedImagePath != null) {
+          final oldFile = File(targetPage.processedImagePath!);
+          if (await oldFile.exists()) await oldFile.delete();
+        }
+
         // Save the processed image to a new file in persistent storage
         final originalName = p.basenameWithoutExtension(widget.imagePath!);
         final ext = p.extension(widget.imagePath!);
@@ -149,6 +155,12 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
         
         await File(newPath).writeAsBytes(_previewImageBytes!);
         processedPath = newPath;
+      } else {
+        // Filter reset to original — delete any existing processed file
+        if (targetPage.processedImagePath != null) {
+          final oldFile = File(targetPage.processedImagePath!);
+          if (await oldFile.exists()) await oldFile.delete();
+        }
       }
 
       // Update document in provider/database

@@ -39,9 +39,9 @@ class DocumentsNotifier extends StateNotifier<AsyncValue<List<Document>>> {
     await loadDocuments();
   }
 
-  /// Delete a document
+  /// Delete a document and its files from disk
   Future<void> deleteDocument(String id) async {
-    await DatabaseService.deleteDocument(id);
+    await DatabaseService.deleteDocumentWithFiles(id);
     await loadDocuments();
   }
 

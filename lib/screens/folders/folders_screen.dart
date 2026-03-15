@@ -542,7 +542,10 @@ class _FolderGridItem extends ConsumerWidget {
                     if (authenticated) {
                       // Get documents in this folder
                       final docs = await DatabaseService.getDocumentsInFolder(folder.id);
-                      final filePaths = docs.expand((d) => d.pages.map((p) => p.imagePath)).toList();
+                      final filePaths = docs.expand((d) => d.pages.expand((p) => [
+                        p.imagePath,
+                        if (p.processedImagePath != null) p.processedImagePath!,
+                      ])).toList();
                       
                       // Decrypt files
                       try {
@@ -591,7 +594,10 @@ class _FolderGridItem extends ConsumerWidget {
                       
                       // Get documents in this folder
                       final docs = await DatabaseService.getDocumentsInFolder(folder.id);
-                      final filePaths = docs.expand((d) => d.pages.map((p) => p.imagePath)).toList();
+                      final filePaths = docs.expand((d) => d.pages.expand((p) => [
+                        p.imagePath,
+                        if (p.processedImagePath != null) p.processedImagePath!,
+                      ])).toList();
                       
                       // Encrypt files
                       try {
