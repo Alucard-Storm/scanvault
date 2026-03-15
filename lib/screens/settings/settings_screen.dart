@@ -42,7 +42,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       onAdFailedToLoad: (ad, error) {
         ad.dispose();
-        print('Ad load failed (code=${error.code} message=${error.message})');
+        debugPrint('Ad load failed (code=${error.code} message=${error.message})');
       },
     )..load();
   }
@@ -174,7 +174,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
               ),
               child: const Center(
                 child: Column(
@@ -217,9 +217,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _buildThemeOption(BuildContext context, WidgetRef ref, String label, ThemeMode mode, ThemeMode current) {
-    return RadioListTile<ThemeMode>(
-      title: Text(label),
-      value: mode,
+    return RadioGroup<ThemeMode>(
       groupValue: current,
       onChanged: (value) {
         if (value != null) {
@@ -227,6 +225,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Navigator.pop(context);
         }
       },
+      child: RadioListTile<ThemeMode>(
+        title: Text(label),
+        value: mode,
+      ),
     );
   }
 

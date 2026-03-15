@@ -56,9 +56,9 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
 
     try {
       final options = DocumentScannerOptions(
-        documentFormat: DocumentFormat.jpeg,
+        documentFormats: {DocumentFormat.jpeg},
         mode: ScannerMode.full,
-        pageLimit: 100, // Allow adding multiple pages at once
+        pageLimit: 100,
       );
 
       final documentScanner = DocumentScanner(options: options);
@@ -67,12 +67,13 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
 
         if (!mounted) return;
 
-        if (result.images.isNotEmpty) {
+        final images = result.images;
+        if (images != null && images.isNotEmpty) {
           // Move to persistent storage and update document
           var currentPages = [...document.pages];
         
         // Actually, let's stick to what was there but adapted
-        for (final scannedPath in result.images) {
+        for (final scannedPath in images) {
              final cleanPath = scannedPath.replaceFirst('file://', '');
              final sourceFile = File(cleanPath);
              
@@ -101,7 +102,7 @@ class _DocumentViewerScreenState extends ConsumerState<DocumentViewerScreen> {
         
         if (mounted) {
              ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.pagesAdded(result.images.length.toString()))),
+              SnackBar(content: Text(AppLocalizations.of(context)!.pagesAdded(images.length.toString()))),
             );
         }
       }

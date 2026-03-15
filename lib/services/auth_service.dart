@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
 
@@ -43,10 +44,10 @@ class AuthService {
       );
     } on PlatformException catch (e) {
       // Handle specific error codes if needed
-      print('Authentication error: ${e.code} - ${e.message}');
+      debugPrint('Authentication error: ${e.code} - ${e.message}');
       return false;
     } catch (e) {
-      print('Authentication error: $e');
+      debugPrint('Authentication error: $e');
       return false;
     }
   }
@@ -56,7 +57,7 @@ class AuthService {
     try {
       await _auth.stopAuthentication();
     } catch (e) {
-      print('Stop authentication error: $e');
+      debugPrint('Stop authentication error: $e');
     }
   }
 }

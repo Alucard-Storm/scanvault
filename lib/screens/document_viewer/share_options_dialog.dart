@@ -49,35 +49,33 @@ class _ShareOptionsDialogState extends State<ShareOptionsDialog> {
           children: [
             // Export Format Selection
             Text(l10n.exportFormat, style: Theme.of(context).textTheme.titleSmall),
-            Column(
-              children: [
-                RadioListTile<ExportFormat>(
-                  title: Text(l10n.pdf),
-                  value: ExportFormat.pdf,
-                  groupValue: _exportFormat,
-                  contentPadding: EdgeInsets.zero,
-                  onChanged: (value) => setState(() => _exportFormat = value!),
-                ),
-                RadioListTile<ExportFormat>(
-                  title: Text(l10n.docx),
-                  value: ExportFormat.docx,
-                  groupValue: _exportFormat,
-                  contentPadding: EdgeInsets.zero,
-                  onChanged: (value) => setState(() => _exportFormat = value!),
-                ),
-                RadioListTile<ExportFormat>(
-                  title: Text(l10n.images),
-                  value: ExportFormat.image,
-                  groupValue: _exportFormat,
-                  contentPadding: EdgeInsets.zero,
-                  onChanged: (value) => setState(() {
-                    _exportFormat = value!;
-                    if (_exportFormat == ExportFormat.image) {
-                      _includeOcrText = false;
-                    }
-                  }),
-                ),
-              ],
+            RadioGroup<ExportFormat>(
+              groupValue: _exportFormat,
+              onChanged: (value) {
+                if (value != null) setState(() {
+                  _exportFormat = value;
+                  if (_exportFormat == ExportFormat.image) _includeOcrText = false;
+                });
+              },
+              child: Column(
+                children: [
+                  RadioListTile<ExportFormat>(
+                    title: Text(l10n.pdf),
+                    value: ExportFormat.pdf,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<ExportFormat>(
+                    title: Text(l10n.docx),
+                    value: ExportFormat.docx,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  RadioListTile<ExportFormat>(
+                    title: Text(l10n.images),
+                    value: ExportFormat.image,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
             ),
             const Divider(),
 

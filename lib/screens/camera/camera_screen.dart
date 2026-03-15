@@ -45,9 +45,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
   Future<void> _startScanning() async {
     try {
       final options = DocumentScannerOptions(
-        documentFormat: DocumentFormat.jpeg,
+        documentFormats: {DocumentFormat.jpeg},
         mode: ScannerMode.full,
-        pageLimit: widget.batchMode ? 100 : 1, // 1 for single page, 100 for batch
+        pageLimit: widget.batchMode ? 100 : 1,
       );
 
       final documentScanner = DocumentScanner(options: options);
@@ -56,11 +56,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
 
         if (!mounted) return;
 
-        if (result.images.isNotEmpty) {
-          // If single mode, user expects quick save.
-          await _saveDocument(result.images);
+        final images = result.images;
+        if (images != null && images.isNotEmpty) {
+          await _saveDocument(images);
         } else {
-          // User cancelled without scanning anything
           if (mounted) context.pop();
         }
       } finally {
